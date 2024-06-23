@@ -42,14 +42,28 @@ func _unhandled_key_input(event: InputEvent) -> void:
 
 func create_frontend_cards():
 	for column in Gamestate.tableaus.size():
-		var tableauContainer := create_tableau_instance()
-		tableauContainer.set_position(Vector2(column*COLUMN_WIDTH + column*COLUMN_GAP, 0))
-		handout_box.add_child(tableauContainer)
+		var tableau_container := create_tableau_instance()
+		tableau_container.set_position(Vector2(column*COLUMN_WIDTH + column*COLUMN_GAP, 0))
+		handout_box.add_child(tableau_container)
 		
 		for row in Gamestate.tableaus[column].cards.size():
 			var card := create_card_instance(Gamestate.tableaus[column].cards[row].type)
 			card.revealed = Gamestate.tableaus[column].cards[row].revealed
-			tableauContainer.add_card(card)
+			tableau_container.add_card(card)
+	
+	stockpile.visible = not Gamestate.stockpile.is_empty()
+	
+	for color in Gamestate.completed_stacks:
+		var stack = Control.new()
+		
+		for value in range(1, 14):
+			var card := Card.fromColorAndValue(color, value)
+			var ui_card = create_card_instance(card.type)
+			ui_card.revealed = true
+			ui_card.disabled = true
+			stack.add_child(ui_card)
+		
+		complete_stacks_container.add_child(stack)
 
 
 func handout_cards():
@@ -194,7 +208,6 @@ func _animate_handout_card(card: UiCard, tableau_index: int):
 
 
 func _animate_card_move(card: UiCard, initial_position: Vector2):
-	print('Animating card move from ', initial_position)
 	card.global_position = initial_position
 	var tween = card.create_tween()
 	tween.tween_property(card, "position", Vector2(), 0.05)
@@ -202,7 +215,6 @@ func _animate_card_move(card: UiCard, initial_position: Vector2):
 
 
 func _animate_stack_complete(card: UiCard, initial_position: Vector2):
-	print('Animating stack complete for card ', card.card_type, ' from ', initial_position)
 	card.global_position = initial_position
 	var tween = card.create_tween()
 	var index = complete_stacks_container.get_child_count()-1
@@ -261,7 +273,7 @@ func _undo_history(history: Gamestate.History):
 
 func _on_save_pressed() -> void:
 	print_debug("Saving savefile")
-	Gamestate._savestate.save()
+	Gamestate.save()
 
 
 func _on_load_pressed() -> void:
@@ -272,5 +284,7 @@ func _on_load_pressed() -> void:
 	NodeUtils.remove_children_queue_free(complete_stacks_container)
 	
 	Gamestate.load()
+	
+	print(Gamestate.tableaus[2].cards.size())
 	
 	create_frontend_cards()

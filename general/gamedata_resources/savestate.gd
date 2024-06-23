@@ -20,7 +20,7 @@ func save() -> void:
 
 
 static func load() -> Savestate:
-	var savestate := SafeResourceLoader.load(SAVEFILE_PATH) as Savestate
+	var savestate := SafeResourceLoader.load(SAVEFILE_PATH, "", ResourceLoader.CACHE_MODE_IGNORE) as Savestate
 	
 	if savestate == null:
 		print("Could not load save file")

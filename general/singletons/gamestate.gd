@@ -55,6 +55,10 @@ func reset(mode: Mode = Mode._SAME_MODE):
 	_create_initial_face_up_cards()
 
 
+func save():
+	_savestate.save()
+
+
 func load():
 	var savestate := Savestate.load()
 	if savestate == null:

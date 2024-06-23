@@ -24,7 +24,7 @@ var revealed: bool:
 var disabled: bool:
 	set(value):
 		disabled = value
-		invisible_button.visible = revealed and not disabled
+		$InvisibleButton.visible = revealed and not disabled
 
 var _tableau
 
