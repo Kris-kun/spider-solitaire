@@ -1,0 +1,110 @@
+[gd_scene load_steps=8 format=3 uid="uid://bmqnrwvabx2ar"]
+
+[ext_resource type="Script" path="res://scenes/game/gamescreen.gd" id="1_6jg1x"]
+[ext_resource type="Texture2D" uid="uid://brexfr5l20s1u" path="res://assets/img/background.png" id="2_mj0n8"]
+[ext_resource type="Texture2D" uid="uid://b4s4c1fp51qec" path="res://assets/img/card-backside.png" id="3_dds7k"]
+[ext_resource type="Texture2D" uid="uid://cs2v6fh7c7s8r" path="res://assets/img/card-backside-highlighted.png" id="4_chfa1"]
+[ext_resource type="Script" path="res://general/nodes/line_orientation.gd" id="5_pc48o"]
+[ext_resource type="Texture2D" uid="uid://jkp38lpsubxt" path="res://assets/img/undo.png" id="6_i45ew"]
+[ext_resource type="Texture2D" uid="uid://b6mbo6n5xf14i" path="res://assets/img/menu.png" id="7_f31bj"]
+
+[node name="Control" type="Control"]
+texture_filter = 1
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_6jg1x")
+
+[node name="TextureRect" type="TextureRect" parent="."]
+layout_mode = 0
+offset_right = 1920.0
+offset_bottom = 1080.0
+texture = ExtResource("2_mj0n8")
+stretch_mode = 1
+metadata/_edit_lock_ = true
+
+[node name="HandoutBox" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -910.0
+offset_top = 100.0
+offset_right = 910.0
+offset_bottom = 600.0
+grow_horizontal = 2
+
+[node name="StockpileButton" type="TextureButton" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -50.0
+offset_bottom = -50.0
+grow_horizontal = 0
+grow_vertical = 0
+texture_normal = ExtResource("3_dds7k")
+texture_hover = ExtResource("4_chfa1")
+stretch_mode = 0
+
+[node name="CompleteStacksContainer" type="Container" parent="."]
+layout_mode = 0
+offset_left = 202.764
+offset_top = 911.18
+offset_right = 202.764
+offset_bottom = 911.18
+script = ExtResource("5_pc48o")
+orientation = 0
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -64.0
+offset_bottom = 64.0
+grow_horizontal = 0
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+
+[node name="TextureButton" type="TextureButton" parent="MarginContainer"]
+layout_mode = 2
+texture_normal = ExtResource("6_i45ew")
+
+[node name="MarginContainer2" type="MarginContainer" parent="."]
+layout_mode = 1
+offset_right = 84.0
+offset_bottom = 84.0
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+
+[node name="TextureButton" type="TextureButton" parent="MarginContainer2"]
+layout_mode = 2
+texture_normal = ExtResource("7_f31bj")
+
+[node name="Button" type="Button" parent="."]
+layout_mode = 0
+offset_left = 827.0
+offset_top = 984.0
+offset_right = 912.0
+offset_bottom = 1015.0
+text = "Speichern"
+
+[node name="Button2" type="Button" parent="."]
+layout_mode = 0
+offset_left = 928.0
+offset_top = 983.0
+offset_right = 1013.0
+offset_bottom = 1014.0
+text = "Laden"
+
+[connection signal="pressed" from="StockpileButton" to="." method="_on_stockpile_button_pressed"]
+[connection signal="pressed" from="MarginContainer/TextureButton" to="." method="_on_undo_pressed"]
+[connection signal="pressed" from="MarginContainer2/TextureButton" to="." method="_on_menu_pressed"]
+[connection signal="pressed" from="Button" to="." method="_on_save_pressed"]
+[connection signal="pressed" from="Button2" to="." method="_on_load_pressed"]

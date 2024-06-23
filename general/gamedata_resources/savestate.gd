@@ -1,0 +1,29 @@
+class_name Savestate
+extends Resource
+
+const SAVEFILE_DIRECTORY := "user://saves"
+const SAVEFILE_PATH := SAVEFILE_DIRECTORY + "/savegame.tres"
+
+## values are the card types
+@export var stockpile: Array[int]
+## array of 10 tableaus, each holding an array with every card [type + visible]
+@export var tableaus: Array[Tableau] = []
+## values are the card colors
+@export var completed_stacks: Array[int] = []
+
+@export var mode: Gamestate.Mode
+
+
+func save() -> void:
+	DirAccess.make_dir_absolute(SAVEFILE_DIRECTORY)
+	ResourceSaver.save(self, SAVEFILE_PATH)
+
+
+static func load() -> Savestate:
+	var savestate := SafeResourceLoader.load(SAVEFILE_PATH) as Savestate
+	
+	if savestate == null:
+		print("Could not load save file")
+		return null
+	
+	return savestate

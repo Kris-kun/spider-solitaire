@@ -1,0 +1,53 @@
+[gd_scene load_steps=7 format=3 uid="uid://byhxxdlegf4rs"]
+
+[ext_resource type="Script" path="res://scenes/game/objects/ui_card.gd" id="1_nltsn"]
+[ext_resource type="Texture2D" uid="uid://b4s4c1fp51qec" path="res://assets/img/card-backside.png" id="2_x01l0"]
+[ext_resource type="Texture2D" uid="uid://cukqatyhruq8m" path="res://assets/img/cards.png" id="3_an1uv"]
+[ext_resource type="Texture2D" uid="uid://58ntr4rsnxmf" path="res://assets/img/card-highlight-effect.png" id="4_1ceq4"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nehi0"]
+resource_local_to_scene = true
+atlas = ExtResource("3_an1uv")
+region = Rect2(0, 0, 96, 144)
+
+[sub_resource type="ImageTexture" id="ImageTexture_i4boh"]
+
+[node name="Card" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 63.0
+offset_bottom = 88.0
+script = ExtResource("1_nltsn")
+
+[node name="BackTexture" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_x01l0")
+expand_mode = 1
+
+[node name="FrontTexture" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = SubResource("AtlasTexture_nehi0")
+expand_mode = 1
+
+[node name="InvisibleButton" type="TextureButton" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture_pressed = SubResource("ImageTexture_i4boh")
+texture_hover = ExtResource("4_1ceq4")
+stretch_mode = 0
+
+[connection signal="gui_input" from="InvisibleButton" to="." method="_on_button_gui_input"]

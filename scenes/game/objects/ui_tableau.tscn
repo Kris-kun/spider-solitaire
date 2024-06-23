@@ -1,0 +1,23 @@
+[gd_scene load_steps=4 format=3 uid="uid://buphukgouix1o"]
+
+[ext_resource type="Script" path="res://scenes/game/objects/ui_tableau.gd" id="1_8iupw"]
+[ext_resource type="Texture2D" uid="uid://ct0qthbab017n" path="res://assets/img/card-placeholder.png" id="2_qmkar"]
+[ext_resource type="Script" path="res://general/nodes/line_orientation.gd" id="3_gvtc1"]
+
+[node name="Tableau" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 63.0
+offset_bottom = 88.0
+script = ExtResource("1_8iupw")
+
+[node name="TextureRect" type="TextureRect" parent="."]
+layout_mode = 2
+offset_right = 63.0
+offset_bottom = 88.0
+texture = ExtResource("2_qmkar")
+expand_mode = 1
+
+[node name="LineOrientation" type="Container" parent="."]
+layout_mode = 0
+script = ExtResource("3_gvtc1")

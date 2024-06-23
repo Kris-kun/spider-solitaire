@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://c84gfllrasn8"]
+
+[ext_resource type="Script" path="res://general/nodes/line_orientation.gd" id="1_hjk0s"]
+
+[node name="LineOrientation" type="Container"]
+script = ExtResource("1_hjk0s")
