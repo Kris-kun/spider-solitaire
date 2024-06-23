@@ -30,28 +30,27 @@ theme_override_constants/separation = 20
 [node name="ContinueButton" type="Button" parent="CenterContainer/VBoxContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 48
-text = "Fortfahren"
+text = "MENU_CONTINUE"
 
 [node name="PlayButton1" type="Button" parent="CenterContainer/VBoxContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 48
-text = "1 Farbe"
+text = "MENU_COLOR_1"
 
 [node name="PlayButton2" type="Button" parent="CenterContainer/VBoxContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 48
-text = "2 Farben"
+text = "MENU_COLOR_2"
 
 [node name="PlayButton3" type="Button" parent="CenterContainer/VBoxContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 48
-text = "4 Farben"
+text = "MENU_COLOR_4"
 
 [node name="CloseButton" type="Button" parent="CenterContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 48
-text = "Beenden
-"
+text = "MENU_EXIT"
 
 [connection signal="pressed" from="CenterContainer/VBoxContainer/VBoxContainer/ContinueButton" to="." method="_on_continue_pressed"]
 [connection signal="pressed" from="CenterContainer/VBoxContainer/VBoxContainer/PlayButton1" to="." method="_on_play_pressed" binds= [1]]
