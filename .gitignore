@@ -13,3 +13,6 @@ export_presets.cfg
 .mono/
 data_*/
 mono_crash.*.json
+
+# Custom Godot-specific ignores (tmp files that seem to be created when accessing the remote tab while the game is running)
+*.tmp
