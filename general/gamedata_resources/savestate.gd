@@ -27,3 +27,12 @@ static func load() -> Savestate:
 		return null
 	
 	return savestate
+
+
+static func delete() -> void:
+	if exists():
+		DirAccess.remove_absolute(SAVEFILE_PATH)
+
+
+static func exists() -> bool:
+	return ResourceLoader.exists(SAVEFILE_PATH)

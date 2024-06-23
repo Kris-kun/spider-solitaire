@@ -103,7 +103,12 @@ func move_cards(tableau_index_source: int, first_card_index: int, tableau_index_
 		_history.push_back(StackCompleteHistory.new(tableau_index_destination))
 		_reveal_tableau_card(tableau_index_destination)
 	
+	if completed_stacks.size() == 8:
+		Savestate.delete()
+	else:
+		save()
 	_print_state()
+	
 	return true
 
 
@@ -155,8 +160,11 @@ func handout() -> Array[Card]:
 	
 	_history.push_back(HandoutHistory.new())
 	
+	save()
 	_print_state()
+	
 	# TODO: emit signal?
+	
 	return cards
 
 
@@ -180,6 +188,7 @@ func undo() -> Array[History]:
 	for history in histories:
 		_undo_history(history)
 	
+	save()
 	_print_state()
 	
 	return histories
