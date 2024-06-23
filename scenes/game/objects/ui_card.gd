@@ -10,6 +10,8 @@ const TEXTURE_HEIGHT = 96
 #const TEXTURE_HEIGHT = 101
 const TEXTURE_SIZE_RATIO = float(TEXTURE_WIDTH) / float(TEXTURE_HEIGHT)
 
+var tween: Tween
+
 var card_type: int:
 	set(value):
 		if value < 0 || value >= 52:
@@ -47,6 +49,19 @@ func _on_button_gui_input(event):
 				drag_started.emit(self)
 
 
+func stop_tween() -> void:
+	if tween != null:
+		tween.pause()
+		tween.custom_step(100.0) # i hope no animation is longer than 100 seconds
+		tween.kill()
+		tween = null
+
+
+func stop_and_create_tween() -> void:
+	stop_tween()
+	tween = create_tween()
+
+
 func get_tableau():
 	return _tableau
 
@@ -65,10 +80,6 @@ func set_tableau(tableau: UiTableau):
 func get_card_index() -> int:
 	return get_parent().get_index()
 	#return get_index()
-
-
-func getCardColor() -> int:
-	return 0
 
 
 func _refresh_textures():

@@ -16,15 +16,18 @@ const CARD_RESOURCE = preload("res://scenes/game/objects/ui_card.tscn")
 @onready var COLUMN_WIDTH = (handout_box.size.x - COLUMN_GAP*(Gamestate.COLUMNS-1)) / Gamestate.COLUMNS
 @onready var CARD_SIZE = Vector2(COLUMN_WIDTH, COLUMN_WIDTH * UiCard.TEXTURE_SIZE_RATIO)
 
+@onready var mouse_coords_label := $MarginContainer3/MouseCoordsLabel
+
 
 func _ready():
 	TransformUtils.set_size(stockpile, CARD_SIZE, TransformUtils.Anchor.BOTTOM_RIGHT)
 	complete_stacks_container.position = Vector2(size.x - stockpile.position.x - stockpile.size.x, stockpile.position.y)
-	Gamestate.stack_completed.connect(_on_stack_completed)
 	create_frontend_cards()
 
 
 func _process(_delta):
+	# TODO: remove the MouseCoordsLabel
+	mouse_coords_label.text = "%d x %d" % [get_global_mouse_position().x, get_global_mouse_position().y]
 	if dragging_tableau != null:
 		dragging_tableau.global_position = get_global_mouse_position() - drag_offset
 
@@ -56,8 +59,8 @@ func create_frontend_cards():
 	for color in Gamestate.completed_stacks:
 		var stack = Control.new()
 		
-		for value in range(1, 14):
-			var card := Card.fromColorAndValue(color, value)
+		for value in 13:
+			var card := Card.fromColorAndValue(color, 13 - value)
 			var ui_card = create_card_instance(card.type)
 			ui_card.revealed = true
 			ui_card.disabled = true
@@ -116,7 +119,9 @@ func _on_card_drag_started(card: UiCard):
 	
 	dragging_tableau = create_tableau_instance()
 	while dragging_tableau_origin.get_card_count() > card_index:
-		dragging_tableau_origin.get_card(card_index).set_tableau(dragging_tableau)
+		var tmp_card := dragging_tableau_origin.get_card(card_index)
+		tmp_card.stop_tween()
+		tmp_card.set_tableau(dragging_tableau)
 	
 	handout_box.get_parent().add_child(dragging_tableau)
 
@@ -150,24 +155,50 @@ func _on_card_drag_stopped():
 				target_tableau = tableau
 				target_tableau_distance = distance
 	
-	# if we couldn't find a proper tableau, just return the cards to the original one
+	# check in which tableau we have to move the cards
+	var stack_complete := false
 	if target_tableau == null:
+		# if we couldn't find a proper tableau, just return the cards to the original one
 		target_tableau = dragging_tableau_origin
 	else:
-		var legal_move = Gamestate.move_cards(
+		# otherwise, try to move it to the new tableau
+		var result := Gamestate.move_cards(
 				dragging_tableau_origin.get_index(),
 				dragging_tableau_origin.get_card_count(),
 				target_tableau.get_index()
 		)
-		print_debug("Legal move: ", legal_move)
-		if not legal_move:
+		stack_complete = result.stack_complete
+		print_debug("Legal move: ", result.legal)
+		if not result.legal:
 			target_tableau = dragging_tableau_origin
 	
-	for tmp_card in dragging_tableau.get_cards():
-		var pos = tmp_card.global_position
-		tmp_card.set_tableau(target_tableau)
+	if stack_complete:
+		var stack = Control.new()
 		
-		call_deferred("_animate_card_move", tmp_card, pos)
+		# get cards to move (from dragging tableau and target tableau)
+		var cards = []
+		var king_index = target_tableau.get_card_count() - 13 + dragging_tableau.get_card_count()
+		for idx in range(king_index, target_tableau.get_card_count()):
+			cards.push_back(target_tableau.get_card(idx))
+		cards += dragging_tableau.get_cards()
+		
+		# move cards to completed stack
+		for tmp_card in cards:
+			var pos = tmp_card.global_position
+			tmp_card.disabled = true
+			tmp_card.get_tableau().remove_card(tmp_card)
+			stack.add_child(tmp_card)
+			call_deferred("_animate_stack_complete", tmp_card, pos)
+		target_tableau.reveal_topmost_card()
+		
+		complete_stacks_container.add_child(stack)
+	else:
+		for tmp_card in dragging_tableau.get_cards():
+			var pos = tmp_card.global_position
+			tmp_card.set_tableau(target_tableau)
+			
+			if not stack_complete:
+				call_deferred("_animate_card_move", tmp_card, pos)
 	
 	dragging_tableau.queue_free()
 	dragging_tableau = null
@@ -175,50 +206,27 @@ func _on_card_drag_stopped():
 	dragging_tableau_origin.reveal_topmost_card()
 
 
-func _on_stack_completed(tableau_index: int):
-	# don't remove cards at this moment because the drag&drop was not completed yet
-	call_deferred("_on_stack_completed_deferred", tableau_index)
-
-
-func _on_stack_completed_deferred(tableau_index: int):
-	var stack = Control.new()
-	
-	var tableau := handout_box.get_child(tableau_index) as UiTableau
-	for i in 13:
-		var card := tableau.get_card(-13 + i) # -13+i for correct order in ui
-		var pos := card.global_position
-		card.disabled = true
-		tableau.remove_card(card)
-		stack.add_child(card)
-		call_deferred("_animate_stack_complete", card, pos)
-	tableau.reveal_topmost_card()
-	
-	complete_stacks_container.add_child(stack)
-
-
 func _on_stockpile_button_pressed() -> void:
 	handout_cards()
 
 
 func _animate_handout_card(card: UiCard, tableau_index: int):
+	card.stop_and_create_tween()
 	card.global_position = stockpile.global_position
-	var tween = card.create_tween()
-	tween.tween_property(card, "position", Vector2(), 0.15).set_delay(0.05 * tableau_index)
-	tween.tween_property(card, "disabled", false, 0).from(true)
+	card.tween.tween_property(card, "position", Vector2(), 0.15).set_delay(0.05 * tableau_index)
+	card.tween.tween_property(card, "disabled", false, 0).from(true)
 
 
 func _animate_card_move(card: UiCard, initial_position: Vector2):
+	card.stop_and_create_tween()
 	card.global_position = initial_position
-	var tween = card.create_tween()
-	tween.tween_property(card, "position", Vector2(), 0.05)
-	tween.tween_property(card, "disabled", false, 0).from(true)
+	card.tween.tween_property(card, "position", Vector2(), 0.05)
 
 
 func _animate_stack_complete(card: UiCard, initial_position: Vector2):
+	card.stop_and_create_tween()
 	card.global_position = initial_position
-	var tween = card.create_tween()
-	var index = complete_stacks_container.get_child_count()-1
-	tween.tween_property(card, "position", Vector2(index * complete_stacks_container.spacing, 0), 10.25)
+	card.tween.tween_property(card, "position", Vector2(), 0.25)
 
 
 func _on_undo_pressed() -> void:
@@ -284,7 +292,5 @@ func _on_load_pressed() -> void:
 	NodeUtils.remove_children_queue_free(complete_stacks_container)
 	
 	Gamestate.load()
-	
-	print(Gamestate.tableaus[2].cards.size())
 	
 	create_frontend_cards()

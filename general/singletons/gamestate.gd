@@ -1,7 +1,5 @@
 extends Node
 
-signal stack_completed(tableau_index: int)
-
 enum Mode {
 	_SAME_MODE = 0,
 	SINGLE_COLOR = 1,
@@ -70,9 +68,9 @@ func load():
 
 ## Moves all cards with index >= first_card_index from the source to the destination tableau
 ## returns true if it is a legal move, false if not (meaning nothing changes)
-func move_cards(tableau_index_source: int, first_card_index: int, tableau_index_destination: int) -> bool:
+func move_cards(tableau_index_source: int, first_card_index: int, tableau_index_destination: int) -> CardMoveResult:
 	if tableau_index_source == tableau_index_destination:
-		return false
+		return CardMoveResult.new(false)
 	
 	var source_tableau := tableaus[tableau_index_source]
 	var source_card := source_tableau.cards[first_card_index]
@@ -82,7 +80,7 @@ func move_cards(tableau_index_source: int, first_card_index: int, tableau_index_
 	if not dest_tableau.cards.is_empty():
 		var dest_card_parent := dest_tableau.cards[-1]
 		if source_card.get_value() + 1 != dest_card_parent.get_value():
-			return false
+			return CardMoveResult.new(false)
 	
 	_history.push_back(MoveHistory.new(tableau_index_source, first_card_index, tableau_index_destination, dest_tableau.cards.size()))
 	
@@ -94,14 +92,17 @@ func move_cards(tableau_index_source: int, first_card_index: int, tableau_index_
 	
 	_reveal_tableau_card(tableau_index_source)
 	
+	var result := CardMoveResult.new(true)
+	
 	# check if we got a full stack
 	if check_complete_stack(dest_tableau):
 		completed_stacks.push_back(dest_tableau.cards[-1].get_color())
 		dest_tableau.cards.resize(dest_tableau.cards.size() - 13)
-		stack_completed.emit(tableau_index_destination)
 		
 		_history.push_back(StackCompleteHistory.new(tableau_index_destination))
 		_reveal_tableau_card(tableau_index_destination)
+		
+		result.stack_complete = true
 	
 	if completed_stacks.size() == 8:
 		Savestate.delete()
@@ -109,7 +110,7 @@ func move_cards(tableau_index_source: int, first_card_index: int, tableau_index_
 		save()
 	_print_state()
 	
-	return true
+	return result
 
 
 func check_can_move(tableau_index: int, card_index: int) -> bool:
@@ -323,3 +324,12 @@ class StackCompleteHistory extends History:
 	func _init(tableau_index: int) -> void:
 		self.tableau_index = tableau_index
 		has_previous = true
+
+class CardMoveResult:
+	var legal: bool
+	var stack_complete: bool
+	
+	@warning_ignore("shadowed_variable")
+	func _init(legal: bool, stack_complete: bool = false) -> void:
+		self.legal = legal
+		self.stack_complete = stack_complete
