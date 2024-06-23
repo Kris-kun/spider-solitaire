@@ -2,8 +2,6 @@ extends Control
 
 
 func _ready() -> void:
-	#call_deferred("_on_play_pressed", 1) # temporary. TODO: remove
-	
 	$CenterContainer/VBoxContainer/VBoxContainer/ContinueButton.visible = Savestate.exists()
 
 
@@ -17,6 +15,8 @@ func _on_play_pressed(colors: int) -> void:
 			Gamestate.reset(Gamestate.Mode.FOUR_COLORS)
 		_:
 			Gamestate.reset() # safety. shouldn't happen though
+	
+	Gamestate.save()
 	
 	_open_gamescreen()
 

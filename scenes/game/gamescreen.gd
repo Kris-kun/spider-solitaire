@@ -271,7 +271,7 @@ func _undo_history(history: Gamestate.History):
 		var tableau := handout_box.get_child(history.tableau_index) as UiTableau
 		
 		for i in 13:
-			var card := stack.get_child(-1) as UiCard
+			var card := stack.get_child(0) as UiCard
 			stack.remove_child(card)
 			card.disabled = false
 			card.set_tableau(tableau)

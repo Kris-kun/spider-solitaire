@@ -47,6 +47,7 @@ func reset(mode: Mode = Mode._SAME_MODE):
 	
 	_savestate = Savestate.new()
 	_mode = mode # because the savestate is new and the mode is inside it
+	_history = []
 	
 	_init_stockpile()
 	_create_initial_face_down_cards()
