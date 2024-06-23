@@ -3,6 +3,12 @@ extends Control
 
 func _ready() -> void:
 	$CenterContainer/VBoxContainer/VBoxContainer/ContinueButton.visible = Savestate.exists()
+	
+	# add color icons to the buttons
+	# we need a space around the icons because otherwise they will be displayed too high
+	_append_colors($CenterContainer/VBoxContainer/VBoxContainer/PlayButton1, "♠")
+	_append_colors($CenterContainer/VBoxContainer/VBoxContainer/PlayButton2, "♠♥")
+	_append_colors($CenterContainer/VBoxContainer/VBoxContainer/PlayButton4, "♠♥♣♦")
 
 
 func _on_play_pressed(colors: int) -> void:
@@ -35,5 +41,7 @@ func _on_quit_pressed() -> void:
 
 func _open_gamescreen():
 	get_tree().change_scene_to_file("res://scenes/game/gamescreen.tscn")
-	#var asdf = preload("res://gamescreen.tscn") #.instantiate()
-	#get_tree().change_scene_to_packed(asdf)
+
+
+func _append_colors(node: Button, colors: String):
+	node.text = " " + colors + " \n" + tr(node.text)

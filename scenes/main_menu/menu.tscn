@@ -34,16 +34,19 @@ text = "MENU_CONTINUE"
 
 [node name="PlayButton1" type="Button" parent="CenterContainer/VBoxContainer/VBoxContainer"]
 layout_mode = 2
+auto_translate = false
 theme_override_font_sizes/font_size = 48
 text = "MENU_COLOR_1"
 
 [node name="PlayButton2" type="Button" parent="CenterContainer/VBoxContainer/VBoxContainer"]
 layout_mode = 2
+auto_translate = false
 theme_override_font_sizes/font_size = 48
 text = "MENU_COLOR_2"
 
-[node name="PlayButton3" type="Button" parent="CenterContainer/VBoxContainer/VBoxContainer"]
+[node name="PlayButton4" type="Button" parent="CenterContainer/VBoxContainer/VBoxContainer"]
 layout_mode = 2
+auto_translate = false
 theme_override_font_sizes/font_size = 48
 text = "MENU_COLOR_4"
 
@@ -55,5 +58,5 @@ text = "MENU_EXIT"
 [connection signal="pressed" from="CenterContainer/VBoxContainer/VBoxContainer/ContinueButton" to="." method="_on_continue_pressed"]
 [connection signal="pressed" from="CenterContainer/VBoxContainer/VBoxContainer/PlayButton1" to="." method="_on_play_pressed" binds= [1]]
 [connection signal="pressed" from="CenterContainer/VBoxContainer/VBoxContainer/PlayButton2" to="." method="_on_play_pressed" binds= [2]]
-[connection signal="pressed" from="CenterContainer/VBoxContainer/VBoxContainer/PlayButton3" to="." method="_on_play_pressed" binds= [4]]
+[connection signal="pressed" from="CenterContainer/VBoxContainer/VBoxContainer/PlayButton4" to="." method="_on_play_pressed" binds= [4]]
 [connection signal="pressed" from="CenterContainer/VBoxContainer/CloseButton" to="." method="_on_quit_pressed"]
