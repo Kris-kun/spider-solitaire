@@ -20,7 +20,7 @@ const CARD_RESOURCE = preload("res://scenes/game/objects/ui_card.tscn")
 
 
 func _ready():
-	TransformUtils.set_size(stockpile, CARD_SIZE, TransformUtils.Anchor.BOTTOM_RIGHT)
+	TransformUtils.set_size(stockpile, CARD_SIZE * 0.75, TransformUtils.Anchor.BOTTOM_RIGHT)
 	complete_stacks_container.position = Vector2(size.x - stockpile.position.x - stockpile.size.x, stockpile.position.y)
 	create_frontend_cards()
 
@@ -62,6 +62,7 @@ func create_frontend_cards():
 		for value in 13:
 			var card := Card.fromColorAndValue(color, 13 - value)
 			var ui_card = create_card_instance(card.type)
+			ui_card.size = stockpile.size
 			ui_card.revealed = true
 			ui_card.disabled = true
 			stack.add_child(ui_card)
@@ -76,6 +77,7 @@ func handout_cards():
 	for i in cards.size():
 		var tableau := handout_box.get_child(i) as UiTableau
 		var card := create_card_instance(cards[i].type)
+		card.size = stockpile.size # because stockpile size might differ from normal card size
 		card.revealed = cards[i].revealed
 		tableau.add_card(card)
 		
@@ -213,8 +215,13 @@ func _on_stockpile_button_pressed() -> void:
 func _animate_handout_card(card: UiCard, tableau_index: int):
 	card.stop_and_create_tween()
 	card.global_position = stockpile.global_position
-	card.tween.tween_property(card, "position", Vector2(), 0.15).set_delay(0.05 * tableau_index)
-	card.tween.tween_property(card, "disabled", false, 0).from(true)
+	
+	var duration = 0.15
+	var delay = 0.05 * tableau_index
+	card.tween.set_parallel()
+	card.tween.tween_property(card, "position", Vector2(), duration).set_delay(delay)
+	card.tween.tween_property(card, "size", CARD_SIZE, duration).set_delay(delay)
+	card.tween.tween_property(card, "disabled", false, 0).from(true).set_delay(duration + delay)
 
 
 func _animate_card_move(card: UiCard, initial_position: Vector2):
@@ -226,7 +233,11 @@ func _animate_card_move(card: UiCard, initial_position: Vector2):
 func _animate_stack_complete(card: UiCard, initial_position: Vector2):
 	card.stop_and_create_tween()
 	card.global_position = initial_position
-	card.tween.tween_property(card, "position", Vector2(), 0.25)
+	
+	var duration = 0.25
+	card.tween.set_parallel()
+	card.tween.tween_property(card, "position", Vector2(), duration)
+	card.tween.tween_property(card, "size", stockpile.size, duration)
 
 
 func _on_undo_pressed() -> void:
@@ -274,6 +285,7 @@ func _undo_history(history: Gamestate.History):
 			var card := stack.get_child(0) as UiCard
 			stack.remove_child(card)
 			card.disabled = false
+			card.size = CARD_SIZE
 			card.set_tableau(tableau)
 		
 		stack.queue_free()
