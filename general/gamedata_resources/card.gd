@@ -14,9 +14,9 @@ func _init(type: int = 0, revealed: bool = false):
 static func fromColorAndValue(color: int, value: int, revealed: bool = false) -> Card:
 	return Card.new(color * 13 + value - 1, revealed)
 
-## 0 = clubs
+## 0 = spades
 ## 1 = hearts
-## 2 = spades
+## 2 = clubs
 ## 3 = diamonds
 func get_color() -> int:
 	@warning_ignore("integer_division")

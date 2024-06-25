@@ -8,7 +8,7 @@
 [sub_resource type="AtlasTexture" id="AtlasTexture_nehi0"]
 resource_local_to_scene = true
 atlas = ExtResource("3_an1uv")
-region = Rect2(0, 0, 96, 144)
+region = Rect2(0, 0, 150, 200)
 
 [sub_resource type="ImageTexture" id="ImageTexture_i4boh"]
 
