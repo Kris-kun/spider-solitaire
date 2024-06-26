@@ -1,9 +1,14 @@
-[gd_scene load_steps=7 format=3 uid="uid://byhxxdlegf4rs"]
+[gd_scene load_steps=9 format=3 uid="uid://byhxxdlegf4rs"]
 
 [ext_resource type="Script" path="res://scenes/game/objects/ui_card.gd" id="1_nltsn"]
 [ext_resource type="Texture2D" uid="uid://b4s4c1fp51qec" path="res://assets/img/card-backside.png" id="2_x01l0"]
+[ext_resource type="Shader" path="res://scenes/game/objects/ui_card.gdshader" id="3_87lip"]
 [ext_resource type="Texture2D" uid="uid://cukqatyhruq8m" path="res://assets/img/cards.png" id="3_an1uv"]
 [ext_resource type="Texture2D" uid="uid://58ntr4rsnxmf" path="res://assets/img/card-highlight-effect.png" id="4_1ceq4"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_vkers"]
+shader = ExtResource("3_87lip")
+shader_parameter/darken_modifier = 0.9
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_nehi0"]
 resource_local_to_scene = true
@@ -30,6 +35,7 @@ texture = ExtResource("2_x01l0")
 expand_mode = 1
 
 [node name="FrontTexture" type="TextureRect" parent="."]
+material = SubResource("ShaderMaterial_vkers")
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0

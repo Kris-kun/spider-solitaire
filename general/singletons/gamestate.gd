@@ -118,6 +118,9 @@ func check_can_move(tableau_index: int, card_index: int) -> bool:
 	var tableau := tableaus[tableau_index]
 	
 	var card := tableau.cards[card_index]
+	if not card.revealed:
+		return false
+	
 	var value := card.get_value()
 	var color := card.get_color()
 	for i in range(card_index + 1, tableau.cards.size()):

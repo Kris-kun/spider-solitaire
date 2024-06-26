@@ -23,9 +23,14 @@ var revealed: bool:
 var disabled: bool:
 	set(value):
 		disabled = value
-		$InvisibleButton.visible = revealed and not disabled
+		_refresh_textures()
+var movable: bool = true:
+	set(value):
+		movable = value
+		_refresh_textures()
 
 var _tableau
+var _grayout_material
 
 @onready var back_texture := $BackTexture
 @onready var front_texture := $FrontTexture
@@ -33,6 +38,7 @@ var _tableau
 
 
 func _ready():
+	_grayout_material = front_texture.material
 	_refresh_textures()
 
 
@@ -84,7 +90,9 @@ func _refresh_textures():
 	
 	back_texture.visible = not revealed
 	front_texture.visible = revealed
-	invisible_button.visible = revealed and not disabled
+	invisible_button.visible = revealed and not disabled and movable
+	front_texture.material = _grayout_material if revealed and not movable else null
+	
 	if revealed:
 		var atlas_region = front_texture.texture.region
 		front_texture.texture.region.position.x = (card_type % 13) * atlas_region.size.x

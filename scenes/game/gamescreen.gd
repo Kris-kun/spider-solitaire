@@ -68,6 +68,8 @@ func create_frontend_cards():
 			stack.add_child(ui_card)
 		
 		complete_stacks_container.add_child(stack)
+	
+	_update_movable_state()
 
 
 func handout_cards():
@@ -85,6 +87,8 @@ func handout_cards():
 	
 	# hide stockpile
 	stockpile.visible = not Gamestate.stockpile.is_empty()
+	
+	_update_movable_state()
 
 
 func create_tableau_instance() -> UiTableau:
@@ -188,6 +192,7 @@ func _on_card_drag_stopped():
 		for tmp_card in cards:
 			var pos = tmp_card.global_position
 			tmp_card.disabled = true
+			tmp_card.movable = true # not really movable but we don't want darkened cards there
 			tmp_card.get_tableau().remove_card(tmp_card)
 			stack.add_child(tmp_card)
 			call_deferred("_animate_stack_complete", tmp_card, pos)
@@ -206,6 +211,13 @@ func _on_card_drag_stopped():
 	dragging_tableau = null
 	
 	dragging_tableau_origin.reveal_topmost_card()
+	_update_movable_state()
+
+
+func _update_movable_state():
+	for tableau: UiTableau in handout_box.get_children():
+		for card: UiCard in tableau.get_cards():
+			card.movable = Gamestate.check_can_move(tableau.get_index(), card.get_card_index())
 
 
 func _on_stockpile_button_pressed() -> void:
@@ -246,6 +258,7 @@ func _on_undo_pressed() -> void:
 		print_debug("Nothing to undo")
 	for history in histories:
 		_undo_history(history)
+	_update_movable_state()
 
 
 func _on_menu_pressed() -> void:
