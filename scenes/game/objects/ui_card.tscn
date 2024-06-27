@@ -17,11 +17,11 @@ region = Rect2(0, 0, 150, 200)
 
 [sub_resource type="ImageTexture" id="ImageTexture_i4boh"]
 
-[node name="Card" type="Control"]
+[node name="Card" type="Control" groups=["cards"]]
 layout_mode = 3
 anchors_preset = 0
-offset_right = 63.0
-offset_bottom = 88.0
+offset_right = 150.0
+offset_bottom = 200.0
 script = ExtResource("1_nltsn")
 
 [node name="BackTexture" type="TextureRect" parent="."]

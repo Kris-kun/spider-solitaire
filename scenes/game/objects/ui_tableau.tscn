@@ -7,17 +7,28 @@
 [node name="Tableau" type="Control"]
 layout_mode = 3
 anchors_preset = 0
-offset_right = 63.0
-offset_bottom = 88.0
+offset_right = 150.0
+offset_bottom = 200.0
 script = ExtResource("1_8iupw")
 
 [node name="TextureRect" type="TextureRect" parent="."]
-layout_mode = 2
-offset_right = 63.0
-offset_bottom = 88.0
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 texture = ExtResource("2_qmkar")
 expand_mode = 1
+stretch_mode = 4
 
 [node name="LineOrientation" type="Container" parent="."]
-layout_mode = 0
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 script = ExtResource("3_gvtc1")
+size_by_children = false
+child_ratio = 1.333

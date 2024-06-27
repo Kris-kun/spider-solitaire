@@ -1,8 +1,9 @@
-[gd_scene load_steps=8 format=3 uid="uid://bmqnrwvabx2ar"]
+[gd_scene load_steps=9 format=3 uid="uid://bmqnrwvabx2ar"]
 
 [ext_resource type="Script" path="res://scenes/game/gamescreen.gd" id="1_6jg1x"]
 [ext_resource type="Texture2D" uid="uid://brexfr5l20s1u" path="res://assets/img/background.png" id="2_mj0n8"]
 [ext_resource type="Texture2D" uid="uid://b4s4c1fp51qec" path="res://assets/img/card-backside.png" id="3_dds7k"]
+[ext_resource type="PackedScene" uid="uid://buphukgouix1o" path="res://scenes/game/objects/ui_tableau.tscn" id="3_gvloo"]
 [ext_resource type="Texture2D" uid="uid://cs2v6fh7c7s8r" path="res://assets/img/card-backside-highlighted.png" id="4_chfa1"]
 [ext_resource type="Script" path="res://general/nodes/line_orientation.gd" id="5_pc48o"]
 [ext_resource type="Texture2D" uid="uid://jkp38lpsubxt" path="res://assets/img/undo.png" id="6_i45ew"]
@@ -19,23 +20,78 @@ grow_vertical = 2
 script = ExtResource("1_6jg1x")
 
 [node name="TextureRect" type="TextureRect" parent="."]
-layout_mode = 0
-offset_right = 1920.0
-offset_bottom = 1080.0
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 texture = ExtResource("2_mj0n8")
 stretch_mode = 1
 metadata/_edit_lock_ = true
 
-[node name="HandoutBox" type="Control" parent="."]
+[node name="HandoutBox" type="HBoxContainer" parent="."]
 layout_mode = 1
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -910.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 100.0
 offset_top = 100.0
-offset_right = 910.0
-offset_bottom = 600.0
+offset_right = -100.0
+offset_bottom = -230.0
 grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 25
+
+[node name="Tableau1" parent="HandoutBox" instance=ExtResource("3_gvloo")]
+layout_mode = 2
+size_flags_horizontal = 3
+metadata/_edit_lock_ = true
+
+[node name="Tableau2" parent="HandoutBox" instance=ExtResource("3_gvloo")]
+layout_mode = 2
+size_flags_horizontal = 3
+metadata/_edit_lock_ = true
+
+[node name="Tableau3" parent="HandoutBox" instance=ExtResource("3_gvloo")]
+layout_mode = 2
+size_flags_horizontal = 3
+metadata/_edit_lock_ = true
+
+[node name="Tableau4" parent="HandoutBox" instance=ExtResource("3_gvloo")]
+layout_mode = 2
+size_flags_horizontal = 3
+metadata/_edit_lock_ = true
+
+[node name="Tableau5" parent="HandoutBox" instance=ExtResource("3_gvloo")]
+layout_mode = 2
+size_flags_horizontal = 3
+metadata/_edit_lock_ = true
+
+[node name="Tableau6" parent="HandoutBox" instance=ExtResource("3_gvloo")]
+layout_mode = 2
+size_flags_horizontal = 3
+metadata/_edit_lock_ = true
+
+[node name="Tableau7" parent="HandoutBox" instance=ExtResource("3_gvloo")]
+layout_mode = 2
+size_flags_horizontal = 3
+metadata/_edit_lock_ = true
+
+[node name="Tableau8" parent="HandoutBox" instance=ExtResource("3_gvloo")]
+layout_mode = 2
+size_flags_horizontal = 3
+metadata/_edit_lock_ = true
+
+[node name="Tableau9" parent="HandoutBox" instance=ExtResource("3_gvloo")]
+layout_mode = 2
+size_flags_horizontal = 3
+metadata/_edit_lock_ = true
+
+[node name="Tableau10" parent="HandoutBox" instance=ExtResource("3_gvloo")]
+layout_mode = 2
+size_flags_horizontal = 3
+metadata/_edit_lock_ = true
 
 [node name="StockpileButton" type="TextureButton" parent="."]
 layout_mode = 1
@@ -44,8 +100,8 @@ anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -200.0
-offset_top = -250.0
+offset_left = -170.0
+offset_top = -210.0
 offset_right = -50.0
 offset_bottom = -50.0
 grow_horizontal = 0
@@ -56,12 +112,19 @@ ignore_texture_size = true
 stretch_mode = 0
 
 [node name="CompleteStacksContainer" type="Container" parent="."]
-layout_mode = 0
-offset_left = 202.764
-offset_top = 911.18
-offset_right = 202.764
-offset_bottom = 911.18
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 50.0
+offset_top = -210.0
+offset_right = 170.0
+offset_bottom = -50.0
+grow_vertical = 0
 script = ExtResource("5_pc48o")
+size_by_children = false
+child_ratio = 0.667
+spacing = 30
 orientation = 0
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
@@ -91,6 +154,7 @@ layout_mode = 2
 texture_normal = ExtResource("7_f31bj")
 
 [node name="MarginContainer3" type="MarginContainer" parent="."]
+visible = false
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
@@ -108,6 +172,13 @@ theme_override_constants/margin_bottom = 20
 layout_mode = 2
 theme_override_font_sizes/font_size = 26
 text = "<mouse coordinates>"
+
+[node name="DraggingTableau" parent="." instance=ExtResource("3_gvloo")]
+visible = false
+offset_left = 872.0
+offset_top = 754.0
+offset_right = 1022.0
+offset_bottom = 954.0
 
 [connection signal="pressed" from="StockpileButton" to="." method="_on_stockpile_button_pressed"]
 [connection signal="pressed" from="MarginContainer/TextureButton" to="." method="_on_undo_pressed"]

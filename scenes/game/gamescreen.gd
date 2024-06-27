@@ -2,8 +2,6 @@ extends Control
 
 const COLUMN_GAP = 30.0
 
-## the temporary tableau with the cards we are dragging
-var dragging_tableau: UiTableau
 ## the original tableau of the cards we are dragging
 var dragging_tableau_origin: UiTableau
 var drag_offset: Vector2
@@ -13,41 +11,40 @@ const CARD_RESOURCE = preload("res://scenes/game/objects/ui_card.tscn")
 @onready var handout_box := $HandoutBox
 @onready var stockpile := $StockpileButton
 @onready var complete_stacks_container := $CompleteStacksContainer
-@onready var COLUMN_WIDTH = (handout_box.size.x - COLUMN_GAP*(Gamestate.COLUMNS-1)) / Gamestate.COLUMNS
-@onready var CARD_SIZE = Vector2(COLUMN_WIDTH, COLUMN_WIDTH * UiCard.TEXTURE_SIZE_RATIO)
+@onready var dragging_tableau := $DraggingTableau
 
 @onready var mouse_coords_label := $MarginContainer3/MouseCoordsLabel
 
 
 func _ready():
-	TransformUtils.set_size(stockpile, CARD_SIZE * 0.75, TransformUtils.Anchor.BOTTOM_RIGHT)
-	complete_stacks_container.position = Vector2(size.x - stockpile.position.x - stockpile.size.x, stockpile.position.y)
 	create_frontend_cards()
 
 
 func _process(_delta):
 	# TODO: remove the MouseCoordsLabel
 	mouse_coords_label.text = "%d x %d" % [get_global_mouse_position().x, get_global_mouse_position().y]
-	if dragging_tableau != null:
+	if dragging_tableau.visible:
 		dragging_tableau.global_position = get_global_mouse_position() - drag_offset
 
 
 func _unhandled_input(event):
 	if event is InputEventMouseButton && event.button_index == MOUSE_BUTTON_LEFT:
-		if not event.pressed && dragging_tableau != null:
+		if not event.pressed && dragging_tableau.visible:
 			_on_card_drag_stopped()
 
 
 func _unhandled_key_input(event: InputEvent) -> void:
-	if event.is_pressed() and event.keycode == KEY_ESCAPE:
-		get_tree().change_scene_to_file("res://scenes/main_menu/menu.tscn")
+	if event.is_pressed():
+		match event.keycode:
+			KEY_ESCAPE:
+				get_tree().change_scene_to_file("res://scenes/main_menu/menu.tscn")
+			KEY_Z: # basically ctrl+z but using ctrl is useless here
+				_on_undo_pressed()
 
 
 func create_frontend_cards():
 	for column in Gamestate.tableaus.size():
-		var tableau_container := create_tableau_instance()
-		tableau_container.set_position(Vector2(column*COLUMN_WIDTH + column*COLUMN_GAP, 0))
-		handout_box.add_child(tableau_container)
+		var tableau_container := handout_box.get_child(column)
 		
 		for row in Gamestate.tableaus[column].cards.size():
 			var card := create_card_instance(Gamestate.tableaus[column].cards[row].type)
@@ -91,16 +88,8 @@ func handout_cards():
 	_update_movable_state()
 
 
-func create_tableau_instance() -> UiTableau:
-	var node = TABLEAU_RESOURCE.instantiate() as UiTableau
-	node.size = CARD_SIZE
-	node.custom_minimum_size = CARD_SIZE
-	return node
-
-
 func create_card_instance(type: int) -> UiCard:
 	var node := CARD_RESOURCE.instantiate() as UiCard
-	node.size = CARD_SIZE
 	node.card_type = type
 	node.drag_started.connect(_on_card_drag_started)
 	return node
@@ -109,7 +98,7 @@ func create_card_instance(type: int) -> UiCard:
 func _on_card_drag_started(card: UiCard):
 	print_debug("card drag started")
 	
-	if dragging_tableau != null:
+	if dragging_tableau.visible:
 		print_debug("already dragging tableau")
 		return # safety check
 	
@@ -123,19 +112,19 @@ func _on_card_drag_started(card: UiCard):
 	drag_offset = get_global_mouse_position() - card.global_position
 	dragging_tableau_origin = card.get_tableau()
 	
-	dragging_tableau = create_tableau_instance()
 	while dragging_tableau_origin.get_card_count() > card_index:
 		var tmp_card := dragging_tableau_origin.get_card(card_index)
 		tmp_card.stop_tween()
 		tmp_card.set_tableau(dragging_tableau)
 	
-	handout_box.get_parent().add_child(dragging_tableau)
+	dragging_tableau.size.x = handout_box.get_child(0).size.x
+	dragging_tableau.visible = true
 
 
 func _on_card_drag_stopped():
 	print_debug("Drag stopped")
 	
-	if dragging_tableau == null:
+	if not dragging_tableau.visible:
 		print_debug("Not dragging anything")
 		return # safety check
 	
@@ -207,8 +196,7 @@ func _on_card_drag_stopped():
 			if not stack_complete:
 				call_deferred("_animate_card_move", tmp_card, pos)
 	
-	dragging_tableau.queue_free()
-	dragging_tableau = null
+	dragging_tableau.visible = false
 	
 	dragging_tableau_origin.reveal_topmost_card()
 	_update_movable_state()
@@ -227,12 +215,13 @@ func _on_stockpile_button_pressed() -> void:
 func _animate_handout_card(card: UiCard, tableau_index: int):
 	card.stop_and_create_tween()
 	card.global_position = stockpile.global_position
+	card.size = stockpile.size
 	
 	var duration = 0.15
 	var delay = 0.05 * tableau_index
 	card.tween.set_parallel()
 	card.tween.tween_property(card, "position", Vector2(), duration).set_delay(delay)
-	card.tween.tween_property(card, "size", CARD_SIZE, duration).set_delay(delay)
+	card.tween.tween_property(card, "size", _get_card_size(), duration).from(stockpile.size).set_delay(delay)
 	card.tween.tween_property(card, "disabled", false, 0).from(true).set_delay(duration + delay)
 
 
@@ -249,13 +238,25 @@ func _animate_stack_complete(card: UiCard, initial_position: Vector2):
 	var duration = 0.25
 	card.tween.set_parallel()
 	card.tween.tween_property(card, "position", Vector2(), duration)
-	card.tween.tween_property(card, "size", stockpile.size, duration)
+	card.tween.tween_property(card, "size", stockpile.size, duration).from(_get_card_size())
 
 
 func _on_undo_pressed() -> void:
+	if dragging_tableau.visible:
+		print_debug("Cannot undo while moving cards")
+		return
+	
 	var histories := Gamestate.undo()
 	if histories.is_empty():
 		print_debug("Nothing to undo")
+		return
+	
+	# complete all currently running animations
+	var all_cards = get_tree().get_nodes_in_group("cards")
+	for card: UiCard in all_cards:
+		card.stop_tween()
+	
+	# finally undo the history entries
 	for history in histories:
 		_undo_history(history)
 	_update_movable_state()
@@ -298,7 +299,6 @@ func _undo_history(history: Gamestate.History):
 			var card := stack.get_child(0) as UiCard
 			stack.remove_child(card)
 			card.disabled = false
-			card.size = CARD_SIZE
 			card.set_tableau(tableau)
 		
 		stack.queue_free()
@@ -319,3 +319,8 @@ func _on_load_pressed() -> void:
 	Gamestate.load()
 	
 	create_frontend_cards()
+
+
+func _get_card_size() -> Vector2:
+	var tableau = handout_box.get_child(0)
+	return Vector2(tableau.size.x, tableau.size.x * UiCard.TEXTURE_SIZE_RATIO)
