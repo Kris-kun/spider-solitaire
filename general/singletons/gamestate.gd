@@ -97,12 +97,7 @@ func move_cards(tableau_index_source: int, first_card_index: int, tableau_index_
 	
 	# check if we got a full stack
 	if check_complete_stack(dest_tableau):
-		completed_stacks.push_back(dest_tableau.cards[-1].get_color())
-		dest_tableau.cards.resize(dest_tableau.cards.size() - 13)
-		
-		_history.push_back(StackCompleteHistory.new(tableau_index_destination))
-		_reveal_tableau_card(tableau_index_destination)
-		
+		_remove_complete_stack(tableau_index_destination)
 		result.stack_complete = true
 	
 	if completed_stacks.size() == 8:
@@ -149,15 +144,16 @@ func check_complete_stack(tableau: Tableau) -> bool:
 	return false
 
 
-func handout() -> Array[Card]:
+func handout() -> HandoutResult:
 	if stockpile.is_empty():
-		return []
+		return HandoutResult.new([])
 	
 	var any_tableau_empty = tableaus.any(func(tableau): return tableau.cards.is_empty())
 	if any_tableau_empty:
-		return []
+		return HandoutResult.new([])
 	
 	var cards: Array[Card] = []
+	var result := HandoutResult.new(cards)
 	for tableau in tableaus:
 		var card = Card.new(stockpile.pop_back(), true)
 		cards.append(card)
@@ -165,12 +161,17 @@ func handout() -> Array[Card]:
 	
 	_history.push_back(HandoutHistory.new())
 	
+	# check for completed stacks
+	for i in tableaus.size():
+		var tableau := tableaus[i]
+		if check_complete_stack(tableau):
+			result.stack_complete_tableau_indices.push_back(i)
+			_remove_complete_stack(i)
+	
 	save()
 	_print_state()
 	
-	# TODO: emit signal?
-	
-	return cards
+	return result
 
 
 ## Undo the last action.[br]
@@ -246,6 +247,14 @@ func _reveal_tableau_card(tableau_index: int):
 	
 	tableau.cards[-1].revealed = true
 	_history.push_back(RevealHistory.new(tableau_index))
+
+
+func _remove_complete_stack(tableau_index: int):
+	var tableau := tableaus[tableau_index]
+	completed_stacks.push_back(tableau.cards[-1].get_color())
+	tableau.cards.resize(tableau.cards.size() - 13)
+	_history.push_back(StackCompleteHistory.new(tableau_index))
+	_reveal_tableau_card(tableau_index)
 
 
 func _undo_history(history: History):
@@ -337,3 +346,12 @@ class CardMoveResult:
 	func _init(legal: bool, stack_complete: bool = false) -> void:
 		self.legal = legal
 		self.stack_complete = stack_complete
+
+class HandoutResult:
+	var handout_cards: Array[Card]
+	var stack_complete_tableau_indices: Array[int]
+	
+	@warning_ignore("shadowed_variable")
+	func _init(handout_cards: Array[Card], stack_complete_tableau_indices: Array[int] = []) -> void:
+		self.handout_cards = handout_cards
+		self.stack_complete_tableau_indices = stack_complete_tableau_indices

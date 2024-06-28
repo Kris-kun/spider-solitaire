@@ -70,7 +70,10 @@ func create_frontend_cards():
 
 
 func handout_cards():
-	var cards := Gamestate.handout()
+	var result := Gamestate.handout()
+	var cards := result.handout_cards
+	
+	print(result)
 	
 	# create cards
 	for i in cards.size():
@@ -82,10 +85,38 @@ func handout_cards():
 		
 		call_deferred("_animate_handout_card", card, i)
 	
+	# move complete stacks
+	if not result.stack_complete_tableau_indices.is_empty():
+		for i in result.stack_complete_tableau_indices:
+			_complete_stack(i)
+	
 	# hide stockpile
 	stockpile.visible = not Gamestate.stockpile.is_empty()
 	
 	_update_movable_state()
+
+
+func _complete_stack(tableau_index: int):
+	var stack := Control.new()
+	var tableau := handout_box.get_child(tableau_index)
+	
+	# get cards to move (from dragging tableau and target tableau)
+	var cards = []
+	var king_index = tableau.get_card_count() - 13
+	for idx in range(king_index, tableau.get_card_count()):
+		cards.push_back(tableau.get_card(idx))
+	
+	# move cards to completed stack
+	for tmp_card in cards:
+		var pos = tmp_card.global_position
+		tmp_card.disabled = true
+		tmp_card.movable = true # not really movable but we don't want darkened cards there
+		tmp_card.get_tableau().remove_card(tmp_card)
+		stack.add_child(tmp_card)
+		call_deferred("_animate_stack_complete", tmp_card, pos)
+	tableau.reveal_topmost_card()
+	
+	complete_stacks_container.add_child(stack)
 
 
 func create_card_instance(type: int) -> UiCard:
