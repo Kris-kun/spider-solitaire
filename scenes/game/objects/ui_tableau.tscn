@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://ct0qthbab017n" path="res://assets/img/card-placeholder.png" id="2_qmkar"]
 [ext_resource type="Script" path="res://general/nodes/line_orientation.gd" id="3_gvtc1"]
 
-[node name="Tableau" type="Control"]
+[node name="Tableau" type="Control" groups=["tableaus"]]
 layout_mode = 3
 anchors_preset = 0
 offset_right = 150.0

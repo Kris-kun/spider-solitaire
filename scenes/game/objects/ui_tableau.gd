@@ -4,7 +4,6 @@ extends Control
 # we can't use the cardContainer in _add_card because cards are added to a temporary
 # tableau before adding it to the scene
 @onready var _card_container: LineOrientation = $LineOrientation
-@onready var _texture = $TextureRect
 
 
 func _ready():
@@ -13,7 +12,7 @@ func _ready():
 
 func _calculate_spacing(node: Control) -> float:
 	var card_height = size.x * UiCard.TEXTURE_SIZE_RATIO
-	return card_height * 0.25 if node.get_child(0).revealed else card_height * 0.1
+	return card_height * 0.25 if node.get_child(0).revealed else card_height * 0.075
 
 
 func add_card(card: UiCard):
@@ -49,6 +48,10 @@ func get_card(idx: int) -> UiCard:
 
 func get_card_count() -> int:
 	return _card_container.get_child_count()
+
+
+func get_tableau_index() -> int:
+	return get_index() / 2
 
 
 func reveal_topmost_card():

@@ -41,52 +41,97 @@ offset_right = -100.0
 offset_bottom = -230.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/separation = 25
+theme_override_constants/separation = 0
 
 [node name="Tableau1" parent="HandoutBox" instance=ExtResource("3_gvloo")]
 layout_mode = 2
 size_flags_horizontal = 3
 metadata/_edit_lock_ = true
 
+[node name="Spacer1" type="Control" parent="HandoutBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.13
+
 [node name="Tableau2" parent="HandoutBox" instance=ExtResource("3_gvloo")]
 layout_mode = 2
 size_flags_horizontal = 3
 metadata/_edit_lock_ = true
+
+[node name="Spacer2" type="Control" parent="HandoutBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.13
 
 [node name="Tableau3" parent="HandoutBox" instance=ExtResource("3_gvloo")]
 layout_mode = 2
 size_flags_horizontal = 3
 metadata/_edit_lock_ = true
 
+[node name="Spacer3" type="Control" parent="HandoutBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.13
+
 [node name="Tableau4" parent="HandoutBox" instance=ExtResource("3_gvloo")]
 layout_mode = 2
 size_flags_horizontal = 3
 metadata/_edit_lock_ = true
+
+[node name="Spacer4" type="Control" parent="HandoutBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.13
 
 [node name="Tableau5" parent="HandoutBox" instance=ExtResource("3_gvloo")]
 layout_mode = 2
 size_flags_horizontal = 3
 metadata/_edit_lock_ = true
 
+[node name="Spacer5" type="Control" parent="HandoutBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.13
+
 [node name="Tableau6" parent="HandoutBox" instance=ExtResource("3_gvloo")]
 layout_mode = 2
 size_flags_horizontal = 3
 metadata/_edit_lock_ = true
+
+[node name="Spacer6" type="Control" parent="HandoutBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.13
 
 [node name="Tableau7" parent="HandoutBox" instance=ExtResource("3_gvloo")]
 layout_mode = 2
 size_flags_horizontal = 3
 metadata/_edit_lock_ = true
 
+[node name="Spacer7" type="Control" parent="HandoutBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.13
+
 [node name="Tableau8" parent="HandoutBox" instance=ExtResource("3_gvloo")]
 layout_mode = 2
 size_flags_horizontal = 3
 metadata/_edit_lock_ = true
 
+[node name="Spacer8" type="Control" parent="HandoutBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.13
+
 [node name="Tableau9" parent="HandoutBox" instance=ExtResource("3_gvloo")]
 layout_mode = 2
 size_flags_horizontal = 3
 metadata/_edit_lock_ = true
+
+[node name="Spacer9" type="Control" parent="HandoutBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.13
 
 [node name="Tableau10" parent="HandoutBox" instance=ExtResource("3_gvloo")]
 layout_mode = 2

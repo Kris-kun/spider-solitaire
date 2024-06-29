@@ -44,7 +44,7 @@ func _unhandled_key_input(event: InputEvent) -> void:
 
 func create_frontend_cards():
 	for column in Gamestate.tableaus.size():
-		var tableau_container := handout_box.get_child(column)
+		var tableau_container := get_tableau(column)
 		
 		for row in Gamestate.tableaus[column].cards.size():
 			var card := create_card_instance(Gamestate.tableaus[column].cards[row].type)
@@ -77,7 +77,7 @@ func handout_cards():
 	
 	# create cards
 	for i in cards.size():
-		var tableau := handout_box.get_child(i) as UiTableau
+		var tableau := get_tableau(i) as UiTableau
 		var card := create_card_instance(cards[i].type)
 		card.size = stockpile.size # because stockpile size might differ from normal card size
 		card.revealed = cards[i].revealed
@@ -98,7 +98,7 @@ func handout_cards():
 
 func _complete_stack(tableau_index: int):
 	var stack := Control.new()
-	var tableau := handout_box.get_child(tableau_index)
+	var tableau := get_tableau(tableau_index)
 	
 	# get cards to move (from dragging tableau and target tableau)
 	var cards = []
@@ -126,6 +126,14 @@ func create_card_instance(type: int) -> UiCard:
 	return node
 
 
+func get_tableau(idx: int) -> UiTableau:
+	return handout_box.get_child(idx*2) as UiTableau
+
+
+func get_tableaus() -> Array[Node]:
+	return handout_box.get_children().filter(func(child: Node): return child is UiTableau)
+
+
 func _on_card_drag_started(card: UiCard):
 	print_debug("card drag started")
 	
@@ -134,7 +142,7 @@ func _on_card_drag_started(card: UiCard):
 		return # safety check
 	
 	var card_index = card.get_card_index()
-	var tableau_index = card.get_tableau().get_index()
+	var tableau_index = card.get_tableau().get_tableau_index()
 	
 	if not Gamestate.check_can_move(tableau_index, card_index):
 		print_debug("cannot move card")
@@ -148,7 +156,7 @@ func _on_card_drag_started(card: UiCard):
 		tmp_card.stop_tween()
 		tmp_card.set_tableau(dragging_tableau)
 	
-	dragging_tableau.size.x = handout_box.get_child(0).size.x
+	dragging_tableau.size.x = get_tableau(0).size.x
 	dragging_tableau.visible = true
 
 
@@ -164,7 +172,7 @@ func _on_card_drag_stopped():
 	var target_tableau_distance: float
 	
 	# check in which tableau we want to put our card
-	for tableau: UiTableau in handout_box.get_children():
+	for tableau: UiTableau in get_tableaus():
 		var last_card: UiCard = tableau.get_card(-1) if tableau.get_card_count() > 0 else null
 		var is_inside: bool
 		var distance: float
@@ -189,9 +197,9 @@ func _on_card_drag_stopped():
 	else:
 		# otherwise, try to move it to the new tableau
 		var result := Gamestate.move_cards(
-				dragging_tableau_origin.get_index(),
+				dragging_tableau_origin.get_tableau_index(),
 				dragging_tableau_origin.get_card_count(),
-				target_tableau.get_index()
+				target_tableau.get_tableau_index()
 		)
 		stack_complete = result.stack_complete
 		print_debug("Legal move: ", result.legal)
@@ -234,9 +242,9 @@ func _on_card_drag_stopped():
 
 
 func _update_movable_state():
-	for tableau: UiTableau in handout_box.get_children():
+	for tableau: UiTableau in get_tableaus():
 		for card: UiCard in tableau.get_cards():
-			card.movable = Gamestate.check_can_move(tableau.get_index(), card.get_card_index())
+			card.movable = Gamestate.check_can_move(tableau.get_tableau_index(), card.get_card_index())
 
 
 func _on_stockpile_button_pressed() -> void:
@@ -301,7 +309,7 @@ func _undo_history(history: Gamestate.History):
 	if history is Gamestate.HandoutHistory:
 		print_debug("Undoing HandoutHistory")
 		
-		for tableau: UiTableau in handout_box.get_children():
+		for tableau: UiTableau in get_tableaus():
 			var card = tableau.get_card(-1)
 			tableau.remove_card(card)
 			card.queue_free()
@@ -309,22 +317,22 @@ func _undo_history(history: Gamestate.History):
 	elif history is Gamestate.MoveHistory:
 		print_debug("Undoing MoveHistory")
 		
-		var tableau_from: UiTableau = handout_box.get_child(history.tableau_index_destination)
-		var tableau_to: UiTableau = handout_box.get_child(history.tableau_index_source)
+		var tableau_from: UiTableau = get_tableau(history.tableau_index_destination)
+		var tableau_to: UiTableau = get_tableau(history.tableau_index_source)
 		while tableau_from.get_card_count() > history.tableau_size_destination:
 			var card = tableau_from.get_card(history.tableau_size_destination)
 			card.set_tableau(tableau_to)
 	elif history is Gamestate.RevealHistory:
 		print_debug("Undoing RevealHistory")
 		
-		handout_box.get_child(history.tableau_index).get_card(-1).revealed = false
+		get_tableau(history.tableau_index).get_card(-1).revealed = false
 	elif history is Gamestate.StackCompleteHistory:
 		print_debug("Undoing StackCompleteHistory")
 		
 		var stack = complete_stacks_container.get_child(-1)
 		complete_stacks_container.remove_child(stack)
 		
-		var tableau := handout_box.get_child(history.tableau_index) as UiTableau
+		var tableau := get_tableau(history.tableau_index) as UiTableau
 		
 		for i in 13:
 			var card := stack.get_child(0) as UiCard
@@ -335,23 +343,6 @@ func _undo_history(history: Gamestate.History):
 		stack.queue_free()
 
 
-func _on_save_pressed() -> void:
-	print_debug("Saving savefile")
-	Gamestate.save()
-
-
-func _on_load_pressed() -> void:
-	print_debug("Loading savefile")
-	
-	NodeUtils.remove_children_queue_free(handout_box)
-	NodeUtils.remove_children_queue_free(stockpile)
-	NodeUtils.remove_children_queue_free(complete_stacks_container)
-	
-	Gamestate.load()
-	
-	create_frontend_cards()
-
-
 func _get_card_size() -> Vector2:
-	var tableau = handout_box.get_child(0)
+	var tableau = get_tableau(0)
 	return Vector2(tableau.size.x, tableau.size.x * UiCard.TEXTURE_SIZE_RATIO)
