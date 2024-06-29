@@ -29,7 +29,7 @@ var movable: bool = true:
 		movable = value
 		_refresh_textures()
 
-var _tableau
+var _tableau_pile
 var _grayout_material
 
 @onready var back_texture := $BackTexture
@@ -65,19 +65,19 @@ func stop_and_create_tween() -> void:
 	tween = create_tween()
 
 
-func get_tableau():
-	return _tableau
+func get_tableau_pile():
+	return _tableau_pile
 
 
-func set_tableau(tableau: UiTableau):
-	if _tableau == tableau:
+func set_tableau_pile(pile: UiTableauPile):
+	if _tableau_pile == pile:
 		return
 	
-	if _tableau != null:
-		_tableau._remove_card(self)
-	_tableau = tableau
-	if _tableau != null:
-		_tableau._add_card(self)
+	if _tableau_pile != null:
+		_tableau_pile._remove_card(self)
+	_tableau_pile = pile
+	if _tableau_pile != null:
+		_tableau_pile._add_card(self)
 
 
 func get_card_index() -> int:

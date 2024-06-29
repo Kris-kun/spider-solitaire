@@ -6,8 +6,8 @@ const SAVEFILE_PATH := SAVEFILE_DIRECTORY + "/savegame.tres"
 
 ## values are the card types
 @export var stockpile: Array[int]
-## array of 10 tableaus, each holding an array with every card [type + visible]
-@export var tableaus: Array[Tableau] = []
+## array of 10 tableau piles, each holding an array with every card [type + visible]
+@export var tableau_piles: Array[TableauPile] = []
 ## values are the card colors
 @export var completed_stacks: Array[int] = []
 

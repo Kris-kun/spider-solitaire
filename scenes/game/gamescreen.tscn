@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://scenes/game/gamescreen.gd" id="1_6jg1x"]
 [ext_resource type="Texture2D" uid="uid://brexfr5l20s1u" path="res://assets/img/background.png" id="2_mj0n8"]
 [ext_resource type="Texture2D" uid="uid://b4s4c1fp51qec" path="res://assets/img/card-backside.png" id="3_dds7k"]
-[ext_resource type="PackedScene" uid="uid://buphukgouix1o" path="res://scenes/game/objects/ui_tableau.tscn" id="3_gvloo"]
+[ext_resource type="PackedScene" uid="uid://buphukgouix1o" path="res://scenes/game/objects/ui_tableau_pile.tscn" id="3_gvloo"]
 [ext_resource type="Texture2D" uid="uid://cs2v6fh7c7s8r" path="res://assets/img/card-backside-highlighted.png" id="4_chfa1"]
 [ext_resource type="Script" path="res://general/nodes/line_orientation.gd" id="5_pc48o"]
 [ext_resource type="Texture2D" uid="uid://jkp38lpsubxt" path="res://assets/img/undo.png" id="6_i45ew"]
@@ -19,7 +19,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_6jg1x")
 
-[node name="TextureRect" type="TextureRect" parent="."]
+[node name="BackgroundTexture" type="TextureRect" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -30,7 +30,7 @@ texture = ExtResource("2_mj0n8")
 stretch_mode = 1
 metadata/_edit_lock_ = true
 
-[node name="HandoutBox" type="HBoxContainer" parent="."]
+[node name="PileContainer" type="HBoxContainer" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -43,97 +43,97 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 0
 
-[node name="Tableau1" parent="HandoutBox" instance=ExtResource("3_gvloo")]
+[node name="Pile1" parent="PileContainer" instance=ExtResource("3_gvloo")]
 layout_mode = 2
 size_flags_horizontal = 3
 metadata/_edit_lock_ = true
 
-[node name="Spacer1" type="Control" parent="HandoutBox"]
+[node name="Spacer1" type="Control" parent="PileContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.13
 
-[node name="Tableau2" parent="HandoutBox" instance=ExtResource("3_gvloo")]
+[node name="Pile2" parent="PileContainer" instance=ExtResource("3_gvloo")]
 layout_mode = 2
 size_flags_horizontal = 3
 metadata/_edit_lock_ = true
 
-[node name="Spacer2" type="Control" parent="HandoutBox"]
+[node name="Spacer2" type="Control" parent="PileContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.13
 
-[node name="Tableau3" parent="HandoutBox" instance=ExtResource("3_gvloo")]
+[node name="Pile3" parent="PileContainer" instance=ExtResource("3_gvloo")]
 layout_mode = 2
 size_flags_horizontal = 3
 metadata/_edit_lock_ = true
 
-[node name="Spacer3" type="Control" parent="HandoutBox"]
+[node name="Spacer3" type="Control" parent="PileContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.13
 
-[node name="Tableau4" parent="HandoutBox" instance=ExtResource("3_gvloo")]
+[node name="Pile4" parent="PileContainer" instance=ExtResource("3_gvloo")]
 layout_mode = 2
 size_flags_horizontal = 3
 metadata/_edit_lock_ = true
 
-[node name="Spacer4" type="Control" parent="HandoutBox"]
+[node name="Spacer4" type="Control" parent="PileContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.13
 
-[node name="Tableau5" parent="HandoutBox" instance=ExtResource("3_gvloo")]
+[node name="Pile5" parent="PileContainer" instance=ExtResource("3_gvloo")]
 layout_mode = 2
 size_flags_horizontal = 3
 metadata/_edit_lock_ = true
 
-[node name="Spacer5" type="Control" parent="HandoutBox"]
+[node name="Spacer5" type="Control" parent="PileContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.13
 
-[node name="Tableau6" parent="HandoutBox" instance=ExtResource("3_gvloo")]
+[node name="Pile6" parent="PileContainer" instance=ExtResource("3_gvloo")]
 layout_mode = 2
 size_flags_horizontal = 3
 metadata/_edit_lock_ = true
 
-[node name="Spacer6" type="Control" parent="HandoutBox"]
+[node name="Spacer6" type="Control" parent="PileContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.13
 
-[node name="Tableau7" parent="HandoutBox" instance=ExtResource("3_gvloo")]
+[node name="Pile7" parent="PileContainer" instance=ExtResource("3_gvloo")]
 layout_mode = 2
 size_flags_horizontal = 3
 metadata/_edit_lock_ = true
 
-[node name="Spacer7" type="Control" parent="HandoutBox"]
+[node name="Spacer7" type="Control" parent="PileContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.13
 
-[node name="Tableau8" parent="HandoutBox" instance=ExtResource("3_gvloo")]
+[node name="Pile8" parent="PileContainer" instance=ExtResource("3_gvloo")]
 layout_mode = 2
 size_flags_horizontal = 3
 metadata/_edit_lock_ = true
 
-[node name="Spacer8" type="Control" parent="HandoutBox"]
+[node name="Spacer8" type="Control" parent="PileContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.13
 
-[node name="Tableau9" parent="HandoutBox" instance=ExtResource("3_gvloo")]
+[node name="Pile9" parent="PileContainer" instance=ExtResource("3_gvloo")]
 layout_mode = 2
 size_flags_horizontal = 3
 metadata/_edit_lock_ = true
 
-[node name="Spacer9" type="Control" parent="HandoutBox"]
+[node name="Spacer9" type="Control" parent="PileContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.13
 
-[node name="Tableau10" parent="HandoutBox" instance=ExtResource("3_gvloo")]
+[node name="Pile10" parent="PileContainer" instance=ExtResource("3_gvloo")]
 layout_mode = 2
 size_flags_horizontal = 3
 metadata/_edit_lock_ = true
@@ -172,7 +172,7 @@ child_ratio = 0.667
 spacing = 30
 orientation = 0
 
-[node name="MarginContainer" type="MarginContainer" parent="."]
+[node name="UndoMarginContainer" type="MarginContainer" parent="."]
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
@@ -183,18 +183,18 @@ grow_horizontal = 0
 theme_override_constants/margin_top = 20
 theme_override_constants/margin_right = 20
 
-[node name="TextureButton" type="TextureButton" parent="MarginContainer"]
+[node name="UndoButton" type="TextureButton" parent="UndoMarginContainer"]
 layout_mode = 2
 texture_normal = ExtResource("6_i45ew")
 
-[node name="MarginContainer2" type="MarginContainer" parent="."]
+[node name="MenuMarginContainer" type="MarginContainer" parent="."]
 layout_mode = 1
 offset_right = 84.0
 offset_bottom = 84.0
 theme_override_constants/margin_left = 20
 theme_override_constants/margin_top = 20
 
-[node name="TextureButton" type="TextureButton" parent="MarginContainer2"]
+[node name="MenuButton" type="TextureButton" parent="MenuMarginContainer"]
 layout_mode = 2
 texture_normal = ExtResource("7_f31bj")
 
@@ -218,7 +218,7 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 26
 text = "<mouse coordinates>"
 
-[node name="DraggingTableau" parent="." instance=ExtResource("3_gvloo")]
+[node name="DraggingPile" parent="." instance=ExtResource("3_gvloo")]
 visible = false
 offset_left = 872.0
 offset_top = 754.0
@@ -226,5 +226,5 @@ offset_right = 1022.0
 offset_bottom = 954.0
 
 [connection signal="pressed" from="StockpileButton" to="." method="_on_stockpile_button_pressed"]
-[connection signal="pressed" from="MarginContainer/TextureButton" to="." method="_on_undo_pressed"]
-[connection signal="pressed" from="MarginContainer2/TextureButton" to="." method="_on_menu_pressed"]
+[connection signal="pressed" from="UndoMarginContainer/UndoButton" to="." method="_on_undo_pressed"]
+[connection signal="pressed" from="MenuMarginContainer/MenuButton" to="." method="_on_menu_pressed"]

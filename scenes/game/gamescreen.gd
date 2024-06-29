@@ -2,16 +2,15 @@ extends Control
 
 const COLUMN_GAP = 30.0
 
-## the original tableau of the cards we are dragging
-var dragging_tableau_origin: UiTableau
+## the original tableau pile of the cards we are dragging
+var dragging_pile_origin: UiTableauPile
 var drag_offset: Vector2
 
-const TABLEAU_RESOURCE = preload("res://scenes/game/objects/ui_tableau.tscn")
 const CARD_RESOURCE = preload("res://scenes/game/objects/ui_card.tscn")
-@onready var handout_box := $HandoutBox
+@onready var pile_container := $PileContainer
 @onready var stockpile := $StockpileButton
 @onready var complete_stacks_container := $CompleteStacksContainer
-@onready var dragging_tableau := $DraggingTableau
+@onready var dragging_pile := $DraggingPile
 
 @onready var mouse_coords_label := $MarginContainer3/MouseCoordsLabel
 
@@ -23,13 +22,13 @@ func _ready():
 func _process(_delta):
 	# TODO: remove the MouseCoordsLabel
 	mouse_coords_label.text = "%d x %d" % [get_global_mouse_position().x, get_global_mouse_position().y]
-	if dragging_tableau.visible:
-		dragging_tableau.global_position = get_global_mouse_position() - drag_offset
+	if dragging_pile.visible:
+		dragging_pile.global_position = get_global_mouse_position() - drag_offset
 
 
 func _unhandled_input(event):
 	if event is InputEventMouseButton && event.button_index == MOUSE_BUTTON_LEFT:
-		if not event.pressed && dragging_tableau.visible:
+		if not event.pressed && dragging_pile.visible:
 			_on_card_drag_stopped()
 
 
@@ -43,13 +42,13 @@ func _unhandled_key_input(event: InputEvent) -> void:
 
 
 func create_frontend_cards():
-	for column in Gamestate.tableaus.size():
-		var tableau_container := get_tableau(column)
+	for column in Gamestate.tableau_piles.size():
+		var pile := get_tableau_pile(column)
 		
-		for row in Gamestate.tableaus[column].cards.size():
-			var card := create_card_instance(Gamestate.tableaus[column].cards[row].type)
-			card.revealed = Gamestate.tableaus[column].cards[row].revealed
-			tableau_container.add_card(card)
+		for row in Gamestate.tableau_piles[column].cards.size():
+			var card := create_card_instance(Gamestate.tableau_piles[column].cards[row].type)
+			card.revealed = Gamestate.tableau_piles[column].cards[row].revealed
+			pile.add_card(card)
 	
 	stockpile.visible = not Gamestate.stockpile.is_empty()
 	
@@ -77,17 +76,17 @@ func handout_cards():
 	
 	# create cards
 	for i in cards.size():
-		var tableau := get_tableau(i) as UiTableau
+		var pile := get_tableau_pile(i) as UiTableauPile
 		var card := create_card_instance(cards[i].type)
 		card.size = stockpile.size # because stockpile size might differ from normal card size
 		card.revealed = cards[i].revealed
-		tableau.add_card(card)
+		pile.add_card(card)
 		
 		call_deferred("_animate_handout_card", card, i)
 	
 	# move complete stacks
-	if not result.stack_complete_tableau_indices.is_empty():
-		for i in result.stack_complete_tableau_indices:
+	if not result.stack_complete_pile_indices.is_empty():
+		for i in result.stack_complete_pile_indices:
 			_complete_stack(i)
 	
 	# hide stockpile
@@ -96,25 +95,25 @@ func handout_cards():
 	_update_movable_state()
 
 
-func _complete_stack(tableau_index: int):
+func _complete_stack(pile_index: int):
 	var stack := Control.new()
-	var tableau := get_tableau(tableau_index)
+	var pile := get_tableau_pile(pile_index)
 	
-	# get cards to move (from dragging tableau and target tableau)
+	# get cards to move (from dragging pile and target pile)
 	var cards = []
-	var king_index = tableau.get_card_count() - 13
-	for idx in range(king_index, tableau.get_card_count()):
-		cards.push_back(tableau.get_card(idx))
+	var king_index = pile.get_card_count() - 13
+	for idx in range(king_index, pile.get_card_count()):
+		cards.push_back(pile.get_card(idx))
 	
 	# move cards to completed stack
 	for tmp_card in cards:
 		var pos = tmp_card.global_position
 		tmp_card.disabled = true
 		tmp_card.movable = true # not really movable but we don't want darkened cards there
-		tmp_card.get_tableau().remove_card(tmp_card)
+		tmp_card.get_tableau_pile().remove_card(tmp_card)
 		stack.add_child(tmp_card)
 		call_deferred("_animate_stack_complete", tmp_card, pos)
-	tableau.reveal_topmost_card()
+	pile.reveal_topmost_card()
 	
 	complete_stacks_container.add_child(stack)
 
@@ -126,54 +125,54 @@ func create_card_instance(type: int) -> UiCard:
 	return node
 
 
-func get_tableau(idx: int) -> UiTableau:
-	return handout_box.get_child(idx*2) as UiTableau
+func get_tableau_pile(idx: int) -> UiTableauPile:
+	return pile_container.get_child(idx*2) as UiTableauPile
 
 
-func get_tableaus() -> Array[Node]:
-	return handout_box.get_children().filter(func(child: Node): return child is UiTableau)
+func get_tableau_piles() -> Array[Node]:
+	return pile_container.get_children().filter(func(child: Node): return child is UiTableauPile)
 
 
 func _on_card_drag_started(card: UiCard):
 	print_debug("card drag started")
 	
-	if dragging_tableau.visible:
-		print_debug("already dragging tableau")
+	if dragging_pile.visible:
+		print_debug("already dragging pile")
 		return # safety check
 	
 	var card_index = card.get_card_index()
-	var tableau_index = card.get_tableau().get_tableau_index()
+	var pile_index = card.get_tableau_pile().get_tableau_pile_index()
 	
-	if not Gamestate.check_can_move(tableau_index, card_index):
+	if not Gamestate.check_can_move(pile_index, card_index):
 		print_debug("cannot move card")
 		return
 	
 	drag_offset = get_global_mouse_position() - card.global_position
-	dragging_tableau_origin = card.get_tableau()
+	dragging_pile_origin = card.get_tableau_pile()
 	
-	while dragging_tableau_origin.get_card_count() > card_index:
-		var tmp_card := dragging_tableau_origin.get_card(card_index)
+	while dragging_pile_origin.get_card_count() > card_index:
+		var tmp_card := dragging_pile_origin.get_card(card_index)
 		tmp_card.stop_tween()
-		tmp_card.set_tableau(dragging_tableau)
+		tmp_card.set_tableau_pile(dragging_pile)
 	
-	dragging_tableau.size.x = get_tableau(0).size.x
-	dragging_tableau.visible = true
+	dragging_pile.size.x = get_tableau_pile(0).size.x
+	dragging_pile.visible = true
 
 
 func _on_card_drag_stopped():
 	print_debug("Drag stopped")
 	
-	if not dragging_tableau.visible:
+	if not dragging_pile.visible:
 		print_debug("Not dragging anything")
 		return # safety check
 	
-	var card = dragging_tableau.get_card(0)
-	var target_tableau: UiTableau
-	var target_tableau_distance: float
+	var card = dragging_pile.get_card(0)
+	var target_pile: UiTableauPile
+	var target_pile_distance: float
 	
-	# check in which tableau we want to put our card
-	for tableau: UiTableau in get_tableaus():
-		var last_card: UiCard = tableau.get_card(-1) if tableau.get_card_count() > 0 else null
+	# check in which pile we want to put our card
+	for pile: UiTableauPile in get_tableau_piles():
+		var last_card: UiCard = pile.get_card(-1) if pile.get_card_count() > 0 else null
 		var is_inside: bool
 		var distance: float
 		
@@ -181,83 +180,83 @@ func _on_card_drag_stopped():
 			is_inside = card.get_global_rect().intersects(last_card.get_global_rect())
 			distance = (last_card.global_position - card.global_position).length()
 		else:
-			is_inside = card.get_global_rect().intersects(tableau.get_global_rect())
-			distance = (tableau.global_position - card.global_position).length()
+			is_inside = card.get_global_rect().intersects(pile.get_global_rect())
+			distance = (pile.global_position - card.global_position).length()
 		
 		if is_inside:
-			if target_tableau == null or distance < target_tableau_distance:
-				target_tableau = tableau
-				target_tableau_distance = distance
+			if target_pile == null or distance < target_pile_distance:
+				target_pile = pile
+				target_pile_distance = distance
 	
-	# check in which tableau we have to move the cards
+	# check in which pile we have to move the cards
 	var stack_complete := false
-	if target_tableau == null:
-		# if we couldn't find a proper tableau, just return the cards to the original one
-		target_tableau = dragging_tableau_origin
+	if target_pile == null:
+		# if we couldn't find a proper pile, just return the cards to the original one
+		target_pile = dragging_pile_origin
 	else:
-		# otherwise, try to move it to the new tableau
+		# otherwise, try to move it to the new pile
 		var result := Gamestate.move_cards(
-				dragging_tableau_origin.get_tableau_index(),
-				dragging_tableau_origin.get_card_count(),
-				target_tableau.get_tableau_index()
+				dragging_pile_origin.get_tableau_pile_index(),
+				dragging_pile_origin.get_card_count(),
+				target_pile.get_tableau_pile_index()
 		)
 		stack_complete = result.stack_complete
 		print_debug("Legal move: ", result.legal)
 		if not result.legal:
-			target_tableau = dragging_tableau_origin
+			target_pile = dragging_pile_origin
 	
 	if stack_complete:
 		var stack = Control.new()
 		
-		# get cards to move (from dragging tableau and target tableau)
+		# get cards to move (from dragging pile and target pile)
 		var cards = []
-		var king_index = target_tableau.get_card_count() - 13 + dragging_tableau.get_card_count()
-		for idx in range(king_index, target_tableau.get_card_count()):
-			cards.push_back(target_tableau.get_card(idx))
-		cards += dragging_tableau.get_cards()
+		var king_index = target_pile.get_card_count() - 13 + dragging_pile.get_card_count()
+		for idx in range(king_index, target_pile.get_card_count()):
+			cards.push_back(target_pile.get_card(idx))
+		cards += dragging_pile.get_cards()
 		
 		# move cards to completed stack
 		for tmp_card in cards:
 			var pos = tmp_card.global_position
 			tmp_card.disabled = true
 			tmp_card.movable = true # not really movable but we don't want darkened cards there
-			tmp_card.get_tableau().remove_card(tmp_card)
+			tmp_card.get_tableau_pile().remove_card(tmp_card)
 			stack.add_child(tmp_card)
 			call_deferred("_animate_stack_complete", tmp_card, pos)
-		target_tableau.reveal_topmost_card()
+		target_pile.reveal_topmost_card()
 		
 		complete_stacks_container.add_child(stack)
 	else:
-		for tmp_card in dragging_tableau.get_cards():
+		for tmp_card in dragging_pile.get_cards():
 			var pos = tmp_card.global_position
-			tmp_card.set_tableau(target_tableau)
+			tmp_card.set_tableau_pile(target_pile)
 			
 			if not stack_complete:
 				call_deferred("_animate_card_move", tmp_card, pos)
 	
-	dragging_tableau.visible = false
+	dragging_pile.visible = false
 	
-	dragging_tableau_origin.reveal_topmost_card()
+	dragging_pile_origin.reveal_topmost_card()
 	_update_movable_state()
 
 
 func _update_movable_state():
-	for tableau: UiTableau in get_tableaus():
-		for card: UiCard in tableau.get_cards():
-			card.movable = Gamestate.check_can_move(tableau.get_tableau_index(), card.get_card_index())
+	for pile: UiTableauPile in get_tableau_piles():
+		for card: UiCard in pile.get_cards():
+			card.movable = Gamestate.check_can_move(pile.get_tableau_pile_index(), card.get_card_index())
 
 
 func _on_stockpile_button_pressed() -> void:
 	handout_cards()
 
 
-func _animate_handout_card(card: UiCard, tableau_index: int):
+func _animate_handout_card(card: UiCard, pile_index: int):
 	card.stop_and_create_tween()
 	card.global_position = stockpile.global_position
 	card.size = stockpile.size
 	
 	var duration = 0.15
-	var delay = 0.05 * tableau_index
+	var delay = 0.05 * pile_index
 	card.tween.set_parallel()
 	card.tween.tween_property(card, "position", Vector2(), duration).set_delay(delay)
 	card.tween.tween_property(card, "size", _get_card_size(), duration).from(stockpile.size).set_delay(delay)
@@ -281,7 +280,7 @@ func _animate_stack_complete(card: UiCard, initial_position: Vector2):
 
 
 func _on_undo_pressed() -> void:
-	if dragging_tableau.visible:
+	if dragging_pile.visible:
 		print_debug("Cannot undo while moving cards")
 		return
 	
@@ -309,40 +308,40 @@ func _undo_history(history: Gamestate.History):
 	if history is Gamestate.HandoutHistory:
 		print_debug("Undoing HandoutHistory")
 		
-		for tableau: UiTableau in get_tableaus():
-			var card = tableau.get_card(-1)
-			tableau.remove_card(card)
+		for pile: UiTableauPile in get_tableau_piles():
+			var card = pile.get_card(-1)
+			pile.remove_card(card)
 			card.queue_free()
 		stockpile.visible = true
 	elif history is Gamestate.MoveHistory:
 		print_debug("Undoing MoveHistory")
 		
-		var tableau_from: UiTableau = get_tableau(history.tableau_index_destination)
-		var tableau_to: UiTableau = get_tableau(history.tableau_index_source)
-		while tableau_from.get_card_count() > history.tableau_size_destination:
-			var card = tableau_from.get_card(history.tableau_size_destination)
-			card.set_tableau(tableau_to)
+		var pile_from: UiTableauPile = get_tableau_pile(history.pile_index_destination)
+		var pile_to: UiTableauPile = get_tableau_pile(history.pile_index_source)
+		while pile_from.get_card_count() > history.pile_size_destination:
+			var card = pile_from.get_card(history.pile_size_destination)
+			card.set_tableau_pile(pile_to)
 	elif history is Gamestate.RevealHistory:
 		print_debug("Undoing RevealHistory")
 		
-		get_tableau(history.tableau_index).get_card(-1).revealed = false
+		get_tableau_pile(history.pile_index).get_card(-1).revealed = false
 	elif history is Gamestate.StackCompleteHistory:
 		print_debug("Undoing StackCompleteHistory")
 		
 		var stack = complete_stacks_container.get_child(-1)
 		complete_stacks_container.remove_child(stack)
 		
-		var tableau := get_tableau(history.tableau_index) as UiTableau
+		var pile := get_tableau_pile(history.pile_index) as UiTableauPile
 		
 		for i in 13:
 			var card := stack.get_child(0) as UiCard
 			stack.remove_child(card)
 			card.disabled = false
-			card.set_tableau(tableau)
+			card.set_tableau_pile(pile)
 		
 		stack.queue_free()
 
 
 func _get_card_size() -> Vector2:
-	var tableau = get_tableau(0)
-	return Vector2(tableau.size.x, tableau.size.x * UiCard.TEXTURE_SIZE_RATIO)
+	var pile = get_tableau_pile(0)
+	return Vector2(pile.size.x, pile.size.x * UiCard.TEXTURE_SIZE_RATIO)

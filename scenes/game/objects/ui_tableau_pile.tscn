@@ -1,15 +1,15 @@
 [gd_scene load_steps=4 format=3 uid="uid://buphukgouix1o"]
 
-[ext_resource type="Script" path="res://scenes/game/objects/ui_tableau.gd" id="1_8iupw"]
-[ext_resource type="Texture2D" uid="uid://ct0qthbab017n" path="res://assets/img/card-placeholder.png" id="2_qmkar"]
-[ext_resource type="Script" path="res://general/nodes/line_orientation.gd" id="3_gvtc1"]
+[ext_resource type="Script" path="res://scenes/game/objects/ui_tableau_pile.gd" id="1_yq4sx"]
+[ext_resource type="Texture2D" uid="uid://ct0qthbab017n" path="res://assets/img/card-placeholder.png" id="2_aqgny"]
+[ext_resource type="Script" path="res://general/nodes/line_orientation.gd" id="3_34uxr"]
 
 [node name="Tableau" type="Control" groups=["tableaus"]]
 layout_mode = 3
 anchors_preset = 0
 offset_right = 150.0
 offset_bottom = 200.0
-script = ExtResource("1_8iupw")
+script = ExtResource("1_yq4sx")
 
 [node name="TextureRect" type="TextureRect" parent="."]
 layout_mode = 1
@@ -18,7 +18,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("2_qmkar")
+texture = ExtResource("2_aqgny")
 expand_mode = 1
 stretch_mode = 4
 
@@ -29,6 +29,6 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("3_gvtc1")
+script = ExtResource("3_34uxr")
 size_by_children = false
 child_ratio = 1.333

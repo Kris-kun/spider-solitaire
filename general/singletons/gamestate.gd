@@ -15,12 +15,12 @@ var stockpile: Array[int]:
 		_savestate.stockpile = value
 	get:
 		return _savestate.stockpile
-### array of 10 tableaus, each holding an array with every card [type + visible]
-var tableaus: Array[Tableau]:
+### array of 10 tableau piles, each holding an array with every card [type + visible]
+var tableau_piles: Array[TableauPile]:
 	set(value):
-		_savestate.tableaus = value
+		_savestate.tableau_piles = value
 	get:
-		return _savestate.tableaus
+		return _savestate.tableau_piles
 ### values are the card colors
 var completed_stacks: Array[int]:
 	set(value):
@@ -67,37 +67,37 @@ func load():
 	_history = []
 
 
-## Moves all cards with index >= first_card_index from the source to the destination tableau
+## Moves all cards with index >= first_card_index from the source to the destination tableau pile
 ## returns true if it is a legal move, false if not (meaning nothing changes)
-func move_cards(tableau_index_source: int, first_card_index: int, tableau_index_destination: int) -> CardMoveResult:
-	if tableau_index_source == tableau_index_destination:
+func move_cards(pile_index_source: int, first_card_index: int, pile_index_destination: int) -> CardMoveResult:
+	if pile_index_source == pile_index_destination:
 		return CardMoveResult.new(false)
 	
-	var source_tableau := tableaus[tableau_index_source]
-	var source_card := source_tableau.cards[first_card_index]
-	var dest_tableau := tableaus[tableau_index_destination]
+	var source_pile := tableau_piles[pile_index_source]
+	var source_card := source_pile.cards[first_card_index]
+	var dest_pile := tableau_piles[pile_index_destination]
 	
 	# check if it's a legal move first
-	if not dest_tableau.cards.is_empty():
-		var dest_card_parent := dest_tableau.cards[-1]
+	if not dest_pile.cards.is_empty():
+		var dest_card_parent := dest_pile.cards[-1]
 		if source_card.get_value() + 1 != dest_card_parent.get_value():
 			return CardMoveResult.new(false)
 	
-	_history.push_back(MoveHistory.new(tableau_index_source, first_card_index, tableau_index_destination, dest_tableau.cards.size()))
+	_history.push_back(MoveHistory.new(pile_index_source, first_card_index, pile_index_destination, dest_pile.cards.size()))
 	
 	# really move the cards now
 	var moving_cards: Array[Card] = []
-	while source_tableau.cards.size() > first_card_index:
-		moving_cards.push_front(source_tableau.cards.pop_back())
-	dest_tableau.cards += moving_cards
+	while source_pile.cards.size() > first_card_index:
+		moving_cards.push_front(source_pile.cards.pop_back())
+	dest_pile.cards += moving_cards
 	
-	_reveal_tableau_card(tableau_index_source)
+	_reveal_tableau_card(pile_index_source)
 	
 	var result := CardMoveResult.new(true)
 	
 	# check if we got a full stack
-	if check_complete_stack(dest_tableau):
-		_remove_complete_stack(tableau_index_destination)
+	if check_complete_stack(dest_pile):
+		_remove_complete_stack(pile_index_destination)
 		result.stack_complete = true
 	
 	if completed_stacks.size() == 8:
@@ -109,17 +109,17 @@ func move_cards(tableau_index_source: int, first_card_index: int, tableau_index_
 	return result
 
 
-func check_can_move(tableau_index: int, card_index: int) -> bool:
-	var tableau := tableaus[tableau_index]
+func check_can_move(pile_index: int, card_index: int) -> bool:
+	var pile := tableau_piles[pile_index]
 	
-	var card := tableau.cards[card_index]
+	var card := pile.cards[card_index]
 	if not card.revealed:
 		return false
 	
 	var value := card.get_value()
 	var color := card.get_color()
-	for i in range(card_index + 1, tableau.cards.size()):
-		card = tableau.cards[i]
+	for i in range(card_index + 1, pile.cards.size()):
+		card = pile.cards[i]
 		value -= 1
 		if card.get_value() != value or card.get_color() != color:
 			return false
@@ -127,14 +127,14 @@ func check_can_move(tableau_index: int, card_index: int) -> bool:
 	return true
 
 
-func check_complete_stack(tableau: Tableau) -> bool:
-	if tableau.cards.size() < 13:
+func check_complete_stack(pile: TableauPile) -> bool:
+	if pile.cards.size() < 13:
 		return false
 	
 	var value := 1
-	var color = tableau.cards[-1].get_color()
-	for i in tableau.cards.size():
-		var card := tableau.cards[-1 - i]
+	var color = pile.cards[-1].get_color()
+	for i in pile.cards.size():
+		var card := pile.cards[-1 - i]
 		if card.get_value() != value or card.get_color() != color:
 			return false
 		elif value == 13:
@@ -148,24 +148,24 @@ func handout() -> HandoutResult:
 	if stockpile.is_empty():
 		return HandoutResult.new([])
 	
-	var any_tableau_empty = tableaus.any(func(tableau): return tableau.cards.is_empty())
-	if any_tableau_empty:
+	var any_pile_empty = tableau_piles.any(func(pile): return pile.cards.is_empty())
+	if any_pile_empty:
 		return HandoutResult.new([])
 	
 	var cards: Array[Card] = []
 	var result := HandoutResult.new(cards)
-	for tableau in tableaus:
+	for pile in tableau_piles:
 		var card = Card.new(stockpile.pop_back(), true)
 		cards.append(card)
-		tableau.cards.append(card)
+		pile.cards.append(card)
 	
 	_history.push_back(HandoutHistory.new())
 	
 	# check for completed stacks
-	for i in tableaus.size():
-		var tableau := tableaus[i]
-		if check_complete_stack(tableau):
-			result.stack_complete_tableau_indices.push_back(i)
+	for i in tableau_piles.size():
+		var pile := tableau_piles[i]
+		if check_complete_stack(pile):
+			result.stack_complete_pile_indices.push_back(i)
 			_remove_complete_stack(i)
 	
 	save()
@@ -177,7 +177,7 @@ func handout() -> HandoutResult:
 ## Undo the last action.[br]
 ## [br]
 ## An action can consist of multiple histories, for example if you
-## move a card from tableau 1 to tableau 2 and the card in tableau 1 will be revealed.[br]
+## move a card from pile 1 to pile 2 and the card in pile 1 will be revealed.[br]
 ## This will consist of two histories:[br]
 ## - The first will be the RevealHistory (because this happened afterwards)[br]
 ## - The second will be the MoveHistory
@@ -212,71 +212,63 @@ func _init_stockpile():
 
 
 func _create_initial_face_down_cards():
-	tableaus = []
-	tableaus.resize(COLUMNS)
+	tableau_piles = []
+	tableau_piles.resize(COLUMNS)
 	
 	for column in 4:
-		tableaus[column] = Tableau.new()
+		tableau_piles[column] = TableauPile.new()
 		for row in 6:
-			tableaus[column].cards.append(Card.new(stockpile.pop_back()))
+			tableau_piles[column].cards.append(Card.new(stockpile.pop_back()))
 	for column in range(4, COLUMNS):
-		tableaus[column] = Tableau.new()
+		tableau_piles[column] = TableauPile.new()
 		for row in 5:
-			tableaus[column].cards.append(Card.new(stockpile.pop_back()))
+			tableau_piles[column].cards.append(Card.new(stockpile.pop_back()))
 
 
 func _create_initial_face_up_cards():
-	for tableau in tableaus:
-		tableau.cards.append(Card.new(stockpile.pop_back(), true))
-	
-	# TODO: remove
-	#for type in 12:
-		#tableaus[6].cards.append(Card.new(12-type, true))
-	#tableaus[7].cards.append(Card.new(0, true))
-	#for type in 12:
-		#tableaus[8].cards.append(Card.new(12-type, true))
-	#tableaus[9].cards.append(Card.new(0, true))
+	for pile in tableau_piles:
+		pile.cards.append(Card.new(stockpile.pop_back(), true))
 
 
-func _reveal_tableau_card(tableau_index: int):
-	var tableau := tableaus[tableau_index]
-	if tableau.cards.is_empty():
+func _reveal_tableau_card(pile_index: int):
+	var pile := tableau_piles[pile_index]
+	if pile.cards.is_empty():
 		return
-	if tableau.cards[-1].revealed:
+	if pile.cards[-1].revealed:
 		return
 	
-	tableau.cards[-1].revealed = true
-	_history.push_back(RevealHistory.new(tableau_index))
+	pile.cards[-1].revealed = true
+	_history.push_back(RevealHistory.new(pile_index))
 
 
-func _remove_complete_stack(tableau_index: int):
-	var tableau := tableaus[tableau_index]
-	completed_stacks.push_back(tableau.cards[-1].get_color())
-	tableau.cards.resize(tableau.cards.size() - 13)
-	_history.push_back(StackCompleteHistory.new(tableau_index))
-	_reveal_tableau_card(tableau_index)
+func _remove_complete_stack(pile_index: int):
+	var pile := tableau_piles[pile_index]
+	completed_stacks.push_back(pile.cards[-1].get_color())
+	pile.cards.resize(pile.cards.size() - 13)
+	_history.push_back(StackCompleteHistory.new(pile_index))
+	_reveal_tableau_card(pile_index)
 
 
 func _undo_history(history: History):
 	if history is HandoutHistory:
-		for i in tableaus.size():
-			var card: Card = tableaus[-1 - i].cards.pop_back()
+		for i in tableau_piles.size():
+			var card: Card = tableau_piles[-1 - i].cards.pop_back()
 			stockpile.push_back(card.type)
 	elif history is MoveHistory:
 		var moving_cards: Array[Card] = []
-		var tableau_from := tableaus[history.tableau_index_destination]
-		var tableau_to := tableaus[history.tableau_index_source]
-		while tableau_from.cards.size() > history.tableau_size_destination:
-			moving_cards.push_front(tableau_from.cards.pop_back())
-		tableau_to.cards += moving_cards
+		var pile_from := tableau_piles[history.pile_index_destination]
+		var pile_to := tableau_piles[history.pile_index_source]
+		while pile_from.cards.size() > history.pile_size_destination:
+			moving_cards.push_front(pile_from.cards.pop_back())
+		pile_to.cards += moving_cards
 	elif history is RevealHistory:
-		tableaus[history.tableau_index].cards[-1].revealed = false
+		tableau_piles[history.pile_index].cards[-1].revealed = false
 	elif history is StackCompleteHistory:
-		var tableau := tableaus[history.tableau_index]
+		var pile := tableau_piles[history.pile_index]
 		var color = completed_stacks.pop_back()
 		for i in 13:
 			var card = Card.fromColorAndValue(color, 13 - i, true)
-			tableau.cards.push_back(card)
+			pile.cards.push_back(card)
 
 
 ## temporary. TODO: delete
@@ -287,11 +279,11 @@ func _print_state():
 	while true:
 		var line := ""
 		var stop := true
-		for tableau in tableaus:
-			if tableau.cards.size() <= row:
+		for pile in tableau_piles:
+			if pile.cards.size() <= row:
 				line += "  -"
 			else:
-				line += " %2s" % tableau.cards[row].get_value_str()
+				line += " %2s" % pile.cards[row].get_value_str()
 				stop = false
 		
 		if stop:
@@ -310,32 +302,32 @@ class HandoutHistory extends History:
 	pass
 
 class MoveHistory extends History:
-	var tableau_index_source: int
+	var pile_index_source: int
 	var first_card_index: int
-	var tableau_index_destination: int
-	var tableau_size_destination: int # need this so we know how to undo this
+	var pile_index_destination: int
+	var pile_size_destination: int # need this so we know how to undo this
 	
 	@warning_ignore("shadowed_variable")
-	func _init(tableau_index_source: int, first_card_index: int, tableau_index_destination: int, tableau_size_destination: int) -> void:
-		self.tableau_index_source = tableau_index_source
+	func _init(pile_index_source: int, first_card_index: int, pile_index_destination: int, pile_size_destination: int) -> void:
+		self.pile_index_source = pile_index_source
 		self.first_card_index = first_card_index
-		self.tableau_index_destination = tableau_index_destination
-		self.tableau_size_destination = tableau_size_destination
+		self.pile_index_destination = pile_index_destination
+		self.pile_size_destination = pile_size_destination
 
 class RevealHistory extends History:
-	var tableau_index: int
+	var pile_index: int
 	
 	@warning_ignore("shadowed_variable")
-	func _init(tableau_index: int) -> void:
-		self.tableau_index = tableau_index
+	func _init(pile_index: int) -> void:
+		self.pile_index = pile_index
 		has_previous = true
 
 class StackCompleteHistory extends History:
-	var tableau_index: int
+	var pile_index: int
 	
 	@warning_ignore("shadowed_variable")
-	func _init(tableau_index: int) -> void:
-		self.tableau_index = tableau_index
+	func _init(pile_index: int) -> void:
+		self.pile_index = pile_index
 		has_previous = true
 
 class CardMoveResult:
@@ -349,9 +341,9 @@ class CardMoveResult:
 
 class HandoutResult:
 	var handout_cards: Array[Card]
-	var stack_complete_tableau_indices: Array[int]
+	var stack_complete_pile_indices: Array[int]
 	
 	@warning_ignore("shadowed_variable")
-	func _init(handout_cards: Array[Card], stack_complete_tableau_indices: Array[int] = []) -> void:
+	func _init(handout_cards: Array[Card], stack_complete_pile_indices: Array[int] = []) -> void:
 		self.handout_cards = handout_cards
-		self.stack_complete_tableau_indices = stack_complete_tableau_indices
+		self.stack_complete_pile_indices = stack_complete_pile_indices

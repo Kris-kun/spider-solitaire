@@ -1,8 +1,8 @@
-class_name UiTableau
+class_name UiTableauPile
 extends Control
 
 # we can't use the cardContainer in _add_card because cards are added to a temporary
-# tableau before adding it to the scene
+# pile before adding it to the scene
 @onready var _card_container: LineOrientation = $LineOrientation
 
 
@@ -16,7 +16,7 @@ func _calculate_spacing(node: Control) -> float:
 
 
 func add_card(card: UiCard):
-	card.set_tableau(self)
+	card.set_tableau_pile(self)
 
 
 func _add_card(card: UiCard):
@@ -50,7 +50,8 @@ func get_card_count() -> int:
 	return _card_container.get_child_count()
 
 
-func get_tableau_index() -> int:
+@warning_ignore("integer_division")
+func get_tableau_pile_index() -> int:
 	return get_index() / 2
 
 
