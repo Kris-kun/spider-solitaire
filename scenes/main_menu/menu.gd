@@ -2,6 +2,8 @@ extends Control
 
 
 func _ready() -> void:
+	DisplayServer.window_set_min_size(Vector2i(800, 400))
+	
 	$CenterContainer/VBoxContainer/VBoxContainer/ContinueButton.visible = Savestate.exists()
 	
 	# add color icons to the buttons
