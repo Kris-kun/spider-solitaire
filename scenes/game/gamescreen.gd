@@ -12,23 +12,19 @@ const CARD_RESOURCE = preload("res://scenes/game/objects/ui_card.tscn")
 @onready var complete_stacks_container := $CompleteStacksContainer
 @onready var dragging_pile := $DraggingPile
 
-@onready var mouse_coords_label := $MarginContainer3/MouseCoordsLabel
-
 
 func _ready():
 	create_frontend_cards()
 
 
 func _process(_delta):
-	# TODO: remove the MouseCoordsLabel
-	mouse_coords_label.text = "%d x %d" % [get_global_mouse_position().x, get_global_mouse_position().y]
 	if dragging_pile.visible:
 		dragging_pile.global_position = get_global_mouse_position() - drag_offset
 
 
 func _unhandled_input(event):
-	if event is InputEventMouseButton && event.button_index == MOUSE_BUTTON_LEFT:
-		if not event.pressed && dragging_pile.visible:
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
+		if not event.pressed and dragging_pile.visible:
 			_on_card_drag_stopped()
 
 
