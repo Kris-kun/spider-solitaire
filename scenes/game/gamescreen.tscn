@@ -1,9 +1,10 @@
-[gd_scene load_steps=9 format=3 uid="uid://bmqnrwvabx2ar"]
+[gd_scene load_steps=10 format=3 uid="uid://bmqnrwvabx2ar"]
 
 [ext_resource type="Script" path="res://scenes/game/gamescreen.gd" id="1_6jg1x"]
 [ext_resource type="Texture2D" uid="uid://brexfr5l20s1u" path="res://assets/img/background.png" id="2_mj0n8"]
 [ext_resource type="Texture2D" uid="uid://b4s4c1fp51qec" path="res://assets/img/card-backside.png" id="3_dds7k"]
 [ext_resource type="PackedScene" uid="uid://buphukgouix1o" path="res://scenes/game/objects/ui_tableau_pile.tscn" id="3_gvloo"]
+[ext_resource type="Script" path="res://scenes/game/pile_container.gd" id="3_ojenr"]
 [ext_resource type="Texture2D" uid="uid://cs2v6fh7c7s8r" path="res://assets/img/card-backside-highlighted.png" id="4_chfa1"]
 [ext_resource type="Script" path="res://general/nodes/line_orientation.gd" id="5_pc48o"]
 [ext_resource type="Texture2D" uid="uid://jkp38lpsubxt" path="res://assets/img/undo.png" id="6_i45ew"]
@@ -42,6 +43,7 @@ offset_bottom = -230.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 0
+script = ExtResource("3_ojenr")
 
 [node name="Pile1" parent="PileContainer" instance=ExtResource("3_gvloo")]
 layout_mode = 2

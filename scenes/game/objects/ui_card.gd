@@ -3,9 +3,9 @@ extends Control
 
 signal drag_started
 
-const TEXTURE_WIDTH = 150
-const TEXTURE_HEIGHT = 200
-const TEXTURE_SIZE_RATIO = float(TEXTURE_HEIGHT) / float(TEXTURE_WIDTH)
+const TEXTURE_WIDTH := 150
+const TEXTURE_HEIGHT := 200
+const TEXTURE_SIZE_RATIO := float(TEXTURE_HEIGHT) / float(TEXTURE_WIDTH)
 
 var tween: Tween
 

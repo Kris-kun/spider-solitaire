@@ -126,11 +126,11 @@ func create_card_instance(type: int) -> UiCard:
 
 
 func get_tableau_pile(idx: int) -> UiTableauPile:
-	return pile_container.get_child(idx*2) as UiTableauPile
+	return pile_container.get_tableau_pile(idx)
 
 
 func get_tableau_piles() -> Array[Node]:
-	return pile_container.get_children().filter(func(child: Node): return child is UiTableauPile)
+	return pile_container.get_tableau_piles()
 
 
 func _on_card_drag_started(card: UiCard):

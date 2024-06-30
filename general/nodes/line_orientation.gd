@@ -57,7 +57,7 @@ func _resize_by_children():
 	else:
 		calc_spacing = _spacing_calculation
 	
-	var offset := 0
+	var offset := 0.0
 	match self.orientation:
 		VERTICAL:
 			for i in get_child_count():
@@ -86,7 +86,7 @@ func _resize_by_parent():
 	else:
 		calc_spacing = _spacing_calculation
 	
-	var offset := 0
+	var offset := 0.0
 	match self.orientation:
 		VERTICAL:
 			for i in get_child_count():
