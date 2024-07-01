@@ -12,6 +12,7 @@ const SAVEFILE_PATH := SAVEFILE_DIRECTORY + "/savegame.tres"
 @export var completed_stacks: Array[int] = []
 
 @export var mode: Gamestate.Mode
+@export var deck_seed: int
 
 
 func save() -> void:

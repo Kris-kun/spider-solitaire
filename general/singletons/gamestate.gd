@@ -1,7 +1,8 @@
 extends Node
 
 enum Mode {
-	_SAME_MODE = 0,
+	SAME_COLOR_SAME_SEED = 0,
+	SAME_COLOR_DIFFERENT_SEED = 3,
 	SINGLE_COLOR = 1,
 	TWO_COLORS = 2,
 	FOUR_COLORS = 4,
@@ -35,19 +36,27 @@ var _mode: Mode:
 		return _savestate.mode
 var _history: Array[History]
 var _savestate: Savestate = Savestate.new()
-
+var _rng = RandomNumberGenerator.new()
 
 func _init():
 	reset(Mode.SINGLE_COLOR)
 
 
-func reset(mode: Mode = Mode._SAME_MODE):
-	if mode == Mode._SAME_MODE:
+func reset(mode: Mode ):
+	if mode == Mode.SAME_COLOR_SAME_SEED:
 		mode = _mode
+	elif mode == Mode.SAME_COLOR_DIFFERENT_SEED:
+		mode = _mode
+		_rng.randomize()
+	else:
+		_rng.randomize()
 	
 	_savestate = Savestate.new()
 	_mode = mode # because the savestate is new and the mode is inside it
 	_history = []
+	
+	_savestate.deck_seed = _rng.seed
+	seed(_savestate.deck_seed)
 	
 	_init_stockpile()
 	_create_initial_face_down_cards()
@@ -207,7 +216,6 @@ func _init_stockpile():
 	for i in 104:
 		stockpile.append(i % unique_cards)
 	
-	randomize()
 	stockpile.shuffle()
 
 

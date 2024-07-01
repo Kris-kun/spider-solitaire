@@ -11,9 +11,11 @@ const CARD_RESOURCE = preload("res://scenes/game/objects/ui_card.tscn")
 @onready var stockpile := $StockpileButton
 @onready var complete_stacks_container := $CompleteStacksContainer
 @onready var dragging_pile := $DraggingPile
+@onready var win_screen_container := $WinScreenContainer
 
 
 func _ready():
+	win_screen_container.visible = false
 	create_frontend_cards()
 
 
@@ -22,20 +24,33 @@ func _process(_delta):
 		dragging_pile.global_position = get_global_mouse_position() - drag_offset
 
 
-func _unhandled_input(event):
-	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
-		if not event.pressed and dragging_pile.visible:
-			_on_card_drag_stopped()
+func _input(event: InputEvent) -> void:
+	if event is InputEventMouseButton:
+		if event.button_index == MOUSE_BUTTON_LEFT:
+			if not event.pressed and dragging_pile.visible:
+				get_viewport().set_input_as_handled()
+				_on_card_drag_stopped()
+		if event.button_index == MOUSE_BUTTON_XBUTTON1:
+			if event.pressed:
+				get_viewport().set_input_as_handled()
+				_on_undo_pressed()
 
 
 func _unhandled_key_input(event: InputEvent) -> void:
 	if event.is_pressed():
 		match event.keycode:
 			KEY_ESCAPE:
+				get_viewport().set_input_as_handled()
 				get_tree().change_scene_to_file("res://scenes/main_menu/menu.tscn")
 			KEY_Z: # basically ctrl+z but using ctrl is useless here
+				get_viewport().set_input_as_handled()
 				_on_undo_pressed()
 
+func reset_cards():
+	NodeUtils.remove_children_queue_free(complete_stacks_container)
+	for pile in get_tableau_piles():
+		NodeUtils.remove_children_queue_free(pile)
+	create_frontend_cards()
 
 func create_frontend_cards():
 	for column in Gamestate.tableau_piles.size():
@@ -112,6 +127,9 @@ func _complete_stack(pile_index: int):
 	pile.reveal_topmost_card()
 	
 	complete_stacks_container.add_child(stack)
+	
+	if complete_stacks_container.get_child_count() == 8:
+		win_screen_container.visible = true
 
 
 func create_card_instance(type: int) -> UiCard:
@@ -234,6 +252,9 @@ func _on_card_drag_stopped():
 	
 	dragging_pile_origin.reveal_topmost_card()
 	_update_movable_state()
+	
+	if complete_stacks_container.get_child_count() == 8:
+		win_screen_container.visible = true
 
 
 func _update_movable_state():
@@ -276,6 +297,10 @@ func _animate_stack_complete(card: UiCard, initial_position: Vector2):
 
 
 func _on_undo_pressed() -> void:
+	if win_screen_container.visible:
+		print_debug("Cannot undo. Game already won")
+		return
+	
 	if dragging_pile.visible:
 		print_debug("Cannot undo while moving cards")
 		return
@@ -341,3 +366,19 @@ func _undo_history(history: Gamestate.History):
 func _get_card_size() -> Vector2:
 	var pile = get_tableau_pile(0)
 	return Vector2(pile.size.x, pile.size.x * UiCard.TEXTURE_SIZE_RATIO)
+
+
+func _on_replay_pressed() -> void:
+	Gamestate.reset(Gamestate.Mode.SAME_COLOR_SAME_SEED)
+	win_screen_container.visible = false
+	reset_cards()
+
+
+func _on_newgame_pressed() -> void:
+	Gamestate.reset(Gamestate.Mode.SAME_COLOR_DIFFERENT_SEED)
+	win_screen_container.visible = false
+	reset_cards()
+
+
+func _on_quit_pressed() -> void:
+	get_tree().quit()

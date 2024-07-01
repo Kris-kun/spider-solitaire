@@ -4,7 +4,7 @@ extends Control
 func _ready() -> void:
 	DisplayServer.window_set_min_size(Vector2i(800, 400))
 	
-	$CenterContainer/VBoxContainer/VBoxContainer/ContinueButton.visible = Savestate.exists()
+	$CenterContainer/VBoxContainer/ContinueButton.visible = Savestate.exists()
 	
 	# add color icons to the buttons
 	# we need a space around the icons because otherwise they will be displayed too high
@@ -21,8 +21,6 @@ func _on_play_pressed(colors: int) -> void:
 			Gamestate.reset(Gamestate.Mode.TWO_COLORS)
 		4:
 			Gamestate.reset(Gamestate.Mode.FOUR_COLORS)
-		_:
-			Gamestate.reset() # safety. shouldn't happen though
 	
 	Gamestate.save()
 	

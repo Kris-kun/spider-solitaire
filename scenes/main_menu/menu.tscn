@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://dtpwfvk0pval8"]
+[gd_scene load_steps=3 format=3 uid="uid://dtpwfvk0pval8"]
 
 [ext_resource type="Script" path="res://scenes/main_menu/menu.gd" id="1_00gu7"]
+[ext_resource type="Theme" uid="uid://choyswlp5dmrq" path="res://general/custom_theme.tres" id="1_r452w"]
 
 [node name="Control" type="Control"]
 layout_mode = 3
@@ -9,6 +10,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme = ExtResource("1_r452w")
 script = ExtResource("1_00gu7")
 
 [node name="CenterContainer" type="CenterContainer" parent="."]
@@ -23,39 +25,34 @@ grow_vertical = 2
 layout_mode = 2
 theme_override_constants/separation = 60
 
+[node name="ContinueButton" type="Button" parent="CenterContainer/VBoxContainer"]
+layout_mode = 2
+text = "MENU_CONTINUE"
+
 [node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_constants/separation = 20
 
-[node name="ContinueButton" type="Button" parent="CenterContainer/VBoxContainer/VBoxContainer"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 48
-text = "MENU_CONTINUE"
-
 [node name="PlayButton1" type="Button" parent="CenterContainer/VBoxContainer/VBoxContainer"]
 layout_mode = 2
 auto_translate = false
-theme_override_font_sizes/font_size = 48
 text = "MENU_COLOR_1"
 
 [node name="PlayButton2" type="Button" parent="CenterContainer/VBoxContainer/VBoxContainer"]
 layout_mode = 2
 auto_translate = false
-theme_override_font_sizes/font_size = 48
 text = "MENU_COLOR_2"
 
 [node name="PlayButton4" type="Button" parent="CenterContainer/VBoxContainer/VBoxContainer"]
 layout_mode = 2
 auto_translate = false
-theme_override_font_sizes/font_size = 48
 text = "MENU_COLOR_4"
 
 [node name="CloseButton" type="Button" parent="CenterContainer/VBoxContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 48
 text = "MENU_EXIT"
 
-[connection signal="pressed" from="CenterContainer/VBoxContainer/VBoxContainer/ContinueButton" to="." method="_on_continue_pressed"]
+[connection signal="pressed" from="CenterContainer/VBoxContainer/ContinueButton" to="." method="_on_continue_pressed"]
 [connection signal="pressed" from="CenterContainer/VBoxContainer/VBoxContainer/PlayButton1" to="." method="_on_play_pressed" binds= [1]]
 [connection signal="pressed" from="CenterContainer/VBoxContainer/VBoxContainer/PlayButton2" to="." method="_on_play_pressed" binds= [2]]
 [connection signal="pressed" from="CenterContainer/VBoxContainer/VBoxContainer/PlayButton4" to="." method="_on_play_pressed" binds= [4]]

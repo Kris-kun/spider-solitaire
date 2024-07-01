@@ -46,7 +46,7 @@ func _on_button_gui_input(event):
 	if disabled:
 		return
 	
-	if event is InputEventMouseButton && self.revealed:
+	if event is InputEventMouseButton and self.revealed:
 		if event.button_index == MOUSE_BUTTON_LEFT:
 			if event.pressed:
 				drag_started.emit(self)

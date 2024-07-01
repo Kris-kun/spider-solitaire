@@ -4,3 +4,7 @@ MENU_COLOR_1,1 suit,1 Farbe
 MENU_COLOR_2,2 suits,2 Farben
 MENU_COLOR_4,4 suits,4 Farben
 MENU_EXIT,Exit game,Spiel beenden
+WIN_TITLE,Game won,Spiel gewonnen
+WIN_REPLAY_GAME,Replay game (same deck),Erneut spielen (gleiches Deck)
+WIN_NEW_GAME,New game,Neues Spiel
+WIN_MENU,Main menu,Hauptmenü
