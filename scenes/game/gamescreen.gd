@@ -7,7 +7,7 @@ var dragging_pile_origin: UiTableauPile
 var drag_offset: Vector2
 
 const CARD_RESOURCE = preload("res://scenes/game/objects/ui_card.tscn")
-@onready var pile_container := $PileContainer
+@onready var pile_container := $PileContainerMaxSize/PileContainer
 @onready var stockpile := $StockpileButton
 @onready var complete_stacks_container := $CompleteStacksContainer
 @onready var dragging_pile := $DraggingPile

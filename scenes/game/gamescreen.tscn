@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://bmqnrwvabx2ar"]
+[gd_scene load_steps=14 format=3 uid="uid://bmqnrwvabx2ar"]
 
 [ext_resource type="Script" path="res://scenes/game/gamescreen.gd" id="1_6jg1x"]
 [ext_resource type="Theme" uid="uid://choyswlp5dmrq" path="res://general/custom_theme.tres" id="1_l3yr2"]
@@ -8,8 +8,12 @@
 [ext_resource type="Script" path="res://scenes/game/pile_container.gd" id="3_ojenr"]
 [ext_resource type="Texture2D" uid="uid://cs2v6fh7c7s8r" path="res://assets/img/card-backside-highlighted.png" id="4_chfa1"]
 [ext_resource type="Script" path="res://general/nodes/line_orientation.gd" id="5_pc48o"]
+[ext_resource type="Script" path="res://scenes/game/pile_container_max_size.gd" id="6_1483l"]
 [ext_resource type="Texture2D" uid="uid://jkp38lpsubxt" path="res://assets/img/undo.png" id="6_i45ew"]
 [ext_resource type="Texture2D" uid="uid://b6mbo6n5xf14i" path="res://assets/img/menu.png" id="7_f31bj"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_liaj1"]
+bg_color = Color(0, 0, 0, 0.392157)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_af0nt"]
 bg_color = Color(0, 0, 0, 0.196078)
@@ -43,6 +47,26 @@ anchor_right = 1.0
 offset_bottom = 100.0
 grow_horizontal = 2
 
+[node name="Panel" type="Panel" parent="Header"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_liaj1")
+
+[node name="MenuMarginContainer" type="MarginContainer" parent="Header"]
+layout_mode = 1
+offset_right = 114.0
+offset_bottom = 84.0
+theme_override_constants/margin_left = 50
+theme_override_constants/margin_top = 20
+
+[node name="MenuButton" type="TextureButton" parent="Header/MenuMarginContainer"]
+layout_mode = 2
+texture_normal = ExtResource("7_f31bj")
+
 [node name="UndoMarginContainer" type="MarginContainer" parent="Header"]
 layout_mode = 1
 anchors_preset = 1
@@ -52,128 +76,126 @@ offset_left = -84.0
 offset_bottom = 84.0
 grow_horizontal = 0
 theme_override_constants/margin_top = 20
-theme_override_constants/margin_right = 20
+theme_override_constants/margin_right = 50
 
 [node name="UndoButton" type="TextureButton" parent="Header/UndoMarginContainer"]
 layout_mode = 2
 texture_normal = ExtResource("6_i45ew")
 
-[node name="MenuMarginContainer" type="MarginContainer" parent="Header"]
-layout_mode = 1
-offset_right = 84.0
-offset_bottom = 84.0
-theme_override_constants/margin_left = 20
-theme_override_constants/margin_top = 20
-
-[node name="MenuButton" type="TextureButton" parent="Header/MenuMarginContainer"]
-layout_mode = 2
-texture_normal = ExtResource("7_f31bj")
-
-[node name="PileContainer" type="HBoxContainer" parent="."]
+[node name="PileContainerMaxSize" type="Control" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 100.0
-offset_top = 100.0
+offset_top = 150.0
 offset_right = -100.0
 offset_bottom = -230.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("6_1483l")
+
+[node name="PileContainer" type="HBoxContainer" parent="PileContainerMaxSize"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 0
 script = ExtResource("3_ojenr")
 
-[node name="Pile1" parent="PileContainer" instance=ExtResource("3_gvloo")]
+[node name="Pile1" parent="PileContainerMaxSize/PileContainer" instance=ExtResource("3_gvloo")]
 layout_mode = 2
 size_flags_horizontal = 3
 metadata/_edit_lock_ = true
 
-[node name="Spacer1" type="Control" parent="PileContainer"]
+[node name="Spacer1" type="Control" parent="PileContainerMaxSize/PileContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.13
 
-[node name="Pile2" parent="PileContainer" instance=ExtResource("3_gvloo")]
+[node name="Pile2" parent="PileContainerMaxSize/PileContainer" instance=ExtResource("3_gvloo")]
 layout_mode = 2
 size_flags_horizontal = 3
 metadata/_edit_lock_ = true
 
-[node name="Spacer2" type="Control" parent="PileContainer"]
+[node name="Spacer2" type="Control" parent="PileContainerMaxSize/PileContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.13
 
-[node name="Pile3" parent="PileContainer" instance=ExtResource("3_gvloo")]
+[node name="Pile3" parent="PileContainerMaxSize/PileContainer" instance=ExtResource("3_gvloo")]
 layout_mode = 2
 size_flags_horizontal = 3
 metadata/_edit_lock_ = true
 
-[node name="Spacer3" type="Control" parent="PileContainer"]
+[node name="Spacer3" type="Control" parent="PileContainerMaxSize/PileContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.13
 
-[node name="Pile4" parent="PileContainer" instance=ExtResource("3_gvloo")]
+[node name="Pile4" parent="PileContainerMaxSize/PileContainer" instance=ExtResource("3_gvloo")]
 layout_mode = 2
 size_flags_horizontal = 3
 metadata/_edit_lock_ = true
 
-[node name="Spacer4" type="Control" parent="PileContainer"]
+[node name="Spacer4" type="Control" parent="PileContainerMaxSize/PileContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.13
 
-[node name="Pile5" parent="PileContainer" instance=ExtResource("3_gvloo")]
+[node name="Pile5" parent="PileContainerMaxSize/PileContainer" instance=ExtResource("3_gvloo")]
 layout_mode = 2
 size_flags_horizontal = 3
 metadata/_edit_lock_ = true
 
-[node name="Spacer5" type="Control" parent="PileContainer"]
+[node name="Spacer5" type="Control" parent="PileContainerMaxSize/PileContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.13
 
-[node name="Pile6" parent="PileContainer" instance=ExtResource("3_gvloo")]
+[node name="Pile6" parent="PileContainerMaxSize/PileContainer" instance=ExtResource("3_gvloo")]
 layout_mode = 2
 size_flags_horizontal = 3
 metadata/_edit_lock_ = true
 
-[node name="Spacer6" type="Control" parent="PileContainer"]
+[node name="Spacer6" type="Control" parent="PileContainerMaxSize/PileContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.13
 
-[node name="Pile7" parent="PileContainer" instance=ExtResource("3_gvloo")]
+[node name="Pile7" parent="PileContainerMaxSize/PileContainer" instance=ExtResource("3_gvloo")]
 layout_mode = 2
 size_flags_horizontal = 3
 metadata/_edit_lock_ = true
 
-[node name="Spacer7" type="Control" parent="PileContainer"]
+[node name="Spacer7" type="Control" parent="PileContainerMaxSize/PileContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.13
 
-[node name="Pile8" parent="PileContainer" instance=ExtResource("3_gvloo")]
+[node name="Pile8" parent="PileContainerMaxSize/PileContainer" instance=ExtResource("3_gvloo")]
 layout_mode = 2
 size_flags_horizontal = 3
 metadata/_edit_lock_ = true
 
-[node name="Spacer8" type="Control" parent="PileContainer"]
+[node name="Spacer8" type="Control" parent="PileContainerMaxSize/PileContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.13
 
-[node name="Pile9" parent="PileContainer" instance=ExtResource("3_gvloo")]
+[node name="Pile9" parent="PileContainerMaxSize/PileContainer" instance=ExtResource("3_gvloo")]
 layout_mode = 2
 size_flags_horizontal = 3
 metadata/_edit_lock_ = true
 
-[node name="Spacer9" type="Control" parent="PileContainer"]
+[node name="Spacer9" type="Control" parent="PileContainerMaxSize/PileContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.13
 
-[node name="Pile10" parent="PileContainer" instance=ExtResource("3_gvloo")]
+[node name="Pile10" parent="PileContainerMaxSize/PileContainer" instance=ExtResource("3_gvloo")]
 layout_mode = 2
 size_flags_horizontal = 3
 metadata/_edit_lock_ = true
@@ -226,6 +248,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+metadata/_edit_lock_ = true
 
 [node name="Panel" type="Panel" parent="WinScreenContainer"]
 layout_mode = 1
@@ -235,6 +258,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_af0nt")
+metadata/_edit_lock_ = true
 
 [node name="CenterContainer" type="CenterContainer" parent="WinScreenContainer"]
 layout_mode = 1
@@ -243,6 +267,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+metadata/_edit_lock_ = true
 
 [node name="PanelContainer" type="PanelContainer" parent="WinScreenContainer/CenterContainer"]
 layout_mode = 2
@@ -283,8 +308,8 @@ text = "WIN_MENU"
 layout_mode = 2
 text = "MENU_EXIT"
 
-[connection signal="pressed" from="Header/UndoMarginContainer/UndoButton" to="." method="_on_undo_pressed"]
 [connection signal="pressed" from="Header/MenuMarginContainer/MenuButton" to="." method="_on_menu_pressed"]
+[connection signal="pressed" from="Header/UndoMarginContainer/UndoButton" to="." method="_on_undo_pressed"]
 [connection signal="pressed" from="StockpileButton" to="." method="_on_stockpile_button_pressed"]
 [connection signal="pressed" from="WinScreenContainer/CenterContainer/PanelContainer/MarginContainer/VBoxContainer2/VBoxContainer/Button" to="." method="_on_replay_pressed"]
 [connection signal="pressed" from="WinScreenContainer/CenterContainer/PanelContainer/MarginContainer/VBoxContainer2/VBoxContainer/Button2" to="." method="_on_newgame_pressed"]
