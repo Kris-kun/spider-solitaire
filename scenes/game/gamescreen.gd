@@ -48,8 +48,9 @@ func _unhandled_key_input(event: InputEvent) -> void:
 
 func reset_cards():
 	NodeUtils.remove_children_queue_free(complete_stacks_container)
-	for pile in get_tableau_piles():
-		NodeUtils.remove_children_queue_free(pile)
+	for pile: UiTableauPile in get_tableau_piles():
+		for card in pile.get_cards():
+			pile.remove_card(card)
 	create_frontend_cards()
 
 func create_frontend_cards():
