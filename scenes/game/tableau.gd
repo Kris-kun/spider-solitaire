@@ -8,7 +8,10 @@ const COLUMN_GAP = 30.0
 var dragging_pile_origin: UiTableauPile
 var drag_offset: Vector2
 
+var _tweens: Array[Tween] = []
+
 const CARD_RESOURCE = preload("res://scenes/game/objects/ui_card.tscn")
+
 @onready var pile_container := $PileContainerMaxSize/PileContainer
 @onready var stockpile := $StockpileButton
 @onready var complete_stacks_container := $CompleteStacksContainer
@@ -70,51 +73,50 @@ func create_frontend_cards():
 func handout_cards():
 	var result := Gamestate.handout()
 	var cards := result.handout_cards
-	
-	print(result)
+	var moving_cards = []
 	
 	# create cards
-	for i in cards.size():
-		var pile := get_tableau_pile(i) as UiTableauPile
-		var card := create_card_instance(cards[i].type)
+	for pile_idx in cards.size():
+		var pile := get_tableau_pile(pile_idx) as UiTableauPile
+		var card := create_card_instance(cards[pile_idx].type)
 		card.size = stockpile.size # because stockpile size might differ from normal card size
-		card.revealed = cards[i].revealed
+		card.revealed = cards[pile_idx].revealed
 		pile.add_card(card)
-		
-		call_deferred("_animate_handout_card", card, i)
+		moving_cards.push_back(card)
+	
+	stockpile.visible = not Gamestate.stockpile.is_empty()
+	_update_movable_state()
+	
+	var tween := _animate_handout_card(moving_cards)
 	
 	# move complete stacks
-	if not result.stack_complete_pile_indices.is_empty():
-		for i in result.stack_complete_pile_indices:
-			_complete_stack(i)
-	
-	# hide stockpile
-	stockpile.visible = not Gamestate.stockpile.is_empty()
-	
-	_update_movable_state()
-
-
-func _complete_stack(pile_index: int):
-	var stack := Control.new()
-	var pile := get_tableau_pile(pile_index)
-	
-	# get cards to move (from dragging pile and target pile)
-	var cards = []
-	var king_index = pile.get_card_count() - 13
-	for idx in range(king_index, pile.get_card_count()):
-		cards.push_back(pile.get_card(idx))
-	
-	# move cards to completed stack
-	for tmp_card in cards:
-		var pos = tmp_card.global_position
-		tmp_card.disabled = true
-		tmp_card.movable = true # not really movable but we don't want darkened cards there
-		tmp_card.get_tableau_pile().remove_card(tmp_card)
-		stack.add_child(tmp_card)
-		call_deferred("_animate_stack_complete", tmp_card, pos)
-	pile.reveal_topmost_card()
-	
-	complete_stacks_container.add_child(stack)
+	for pile: UiTableauPile in get_tableau_piles():
+		if tween.is_running(): # why is there no is_finished()?
+			await tween.finished
+		
+		if Gamestate.try_complete_stack(pile.get_tableau_pile_index()):
+			var stack := Control.new()
+			complete_stacks_container.add_child(stack)
+		
+			# get cards to move (from dragging pile and target pile)
+			var cardsArr = []
+			var king_index = pile.get_card_count() - 13
+			for idx in range(king_index, pile.get_card_count()):
+				var card := pile.get_card(idx)
+				cardsArr.push_back([card, card.global_position])
+			
+			# move cards to completed stack
+			for arr in cardsArr:
+				var card: UiCard = arr[0]
+				card.disabled = true
+				card.movable = true # not really movable but we don't want darkened cards there
+				card.get_tableau_pile().remove_card(card)
+				stack.add_child(card)
+				card.global_position = arr[1]
+			
+			tween = _animate_stack_complete(cardsArr.map(func(v): return v[0]))
+			
+			pile.reveal_topmost_card()
 	
 	if is_game_finished():
 		game_finished.emit()
@@ -196,12 +198,75 @@ func _on_card_drag_stopped():
 	if not dragging_pile.visible:
 		print_debug("Not dragging anything")
 		return # safety check
+	dragging_pile.visible = false
 	
-	var card = dragging_pile.get_card(0)
+	# check in which pile we want to put our card
+	var target_pile := _get_intersecting_pile(dragging_pile.get_card(0))
+	
+	# check in which pile we have to move the cards
+	#var stack_complete := false
+	if target_pile == null:
+		# if we couldn't find a proper pile, just return the cards to the original one
+		target_pile = dragging_pile_origin
+	else:
+		# otherwise, try to move it to the new pile
+		var result := Gamestate.move_cards(
+				dragging_pile_origin.get_tableau_pile_index(),
+				dragging_pile_origin.get_card_count(),
+				target_pile.get_tableau_pile_index()
+		)
+		#stack_complete = result.stack_complete
+		print_debug("Legal move: ", result.legal)
+		if not result.legal:
+			target_pile = dragging_pile_origin
+	
+	var moving_cards: Array = dragging_pile.get_cards()
+	
+	for card in moving_cards:
+		var pos = card.global_position
+		card.set_tableau_pile(target_pile)
+		card.global_position = pos
+	var tween := _animate_cards_move_to_0(moving_cards)
+	
+	dragging_pile_origin.reveal_topmost_card()
+	_update_movable_state()
+	
+	# check for completed stacks only after the animation finished
+	await tween.finished
+	if Gamestate.try_complete_stack(target_pile.get_tableau_pile_index()):
+		var stack = Control.new()
+		complete_stacks_container.add_child(stack)
+		
+		# get cards to move (from dragging pile and target pile)
+		var cardsArr = []
+		var king_index = target_pile.get_card_count() - 13
+		for idx in range(king_index, target_pile.get_card_count()):
+			var card := target_pile.get_card(idx)
+			cardsArr.push_back([card, card.global_position])
+		
+		# move cards to completed stack
+		for arr in cardsArr:
+			var card: UiCard = arr[0]
+			card.disabled = true
+			card.movable = true # not really movable but we don't want darkened cards there
+			card.get_tableau_pile().remove_card(card)
+			stack.add_child(card)
+			card.global_position = arr[1]
+		
+		target_pile.reveal_topmost_card()
+		_update_movable_state()
+		
+		tween = _animate_stack_complete(cardsArr.map(func(v): return v[0]))
+		
+		await tween.finished
+		if is_game_finished():
+			game_finished.emit()
+
+
+func _get_intersecting_pile(card: UiCard) -> UiTableauPile:
 	var target_pile: UiTableauPile
 	var target_pile_distance: float
 	
-	# check in which pile we want to put our card
 	for pile: UiTableauPile in get_tableau_piles():
 		var last_card: UiCard = pile.get_card(-1) if pile.get_card_count() > 0 else null
 		var is_inside: bool
@@ -217,61 +282,9 @@ func _on_card_drag_stopped():
 		if is_inside:
 			if target_pile == null or distance < target_pile_distance:
 				target_pile = pile
-				target_pile_distance = distance
+				target_pile_distance = distance#
 	
-	# check in which pile we have to move the cards
-	var stack_complete := false
-	if target_pile == null:
-		# if we couldn't find a proper pile, just return the cards to the original one
-		target_pile = dragging_pile_origin
-	else:
-		# otherwise, try to move it to the new pile
-		var result := Gamestate.move_cards(
-				dragging_pile_origin.get_tableau_pile_index(),
-				dragging_pile_origin.get_card_count(),
-				target_pile.get_tableau_pile_index()
-		)
-		stack_complete = result.stack_complete
-		print_debug("Legal move: ", result.legal)
-		if not result.legal:
-			target_pile = dragging_pile_origin
-	
-	if stack_complete:
-		var stack = Control.new()
-		
-		# get cards to move (from dragging pile and target pile)
-		var cards = []
-		var king_index = target_pile.get_card_count() - 13 + dragging_pile.get_card_count()
-		for idx in range(king_index, target_pile.get_card_count()):
-			cards.push_back(target_pile.get_card(idx))
-		cards += dragging_pile.get_cards()
-		
-		# move cards to completed stack
-		for tmp_card in cards:
-			var pos = tmp_card.global_position
-			tmp_card.disabled = true
-			tmp_card.movable = true # not really movable but we don't want darkened cards there
-			tmp_card.get_tableau_pile().remove_card(tmp_card)
-			stack.add_child(tmp_card)
-			call_deferred("_animate_stack_complete", tmp_card, pos)
-		target_pile.reveal_topmost_card()
-		
-		complete_stacks_container.add_child(stack)
-	else:
-		for tmp_card in dragging_pile.get_cards():
-			var pos = tmp_card.global_position
-			tmp_card.set_tableau_pile(target_pile)
-			
-			if not stack_complete:
-				call_deferred("_animate_card_move", tmp_card, pos)
-	
-	dragging_pile.visible = false
-	
-	dragging_pile_origin.reveal_topmost_card()
-	_update_movable_state()
-	
-	if is_game_finished():
-		game_finished.emit()
+	return target_pile
 
 
 func _update_movable_state():
@@ -284,33 +297,45 @@ func _on_stockpile_button_pressed() -> void:
 	handout_cards()
 
 
-func _animate_handout_card(card: UiCard, pile_index: int):
-	card.stop_and_create_tween()
-	card.global_position = stockpile.global_position
-	card.size = stockpile.size
+func _animate_handout_card(cards: Array) -> Tween:
+	var tween := create_tween().set_parallel()
+	const duration = 0.15
+	const delay = 0.05
 	
-	var duration = 0.15
-	var delay = 0.05 * pile_index
-	card.tween.set_parallel()
-	card.tween.tween_property(card, "position", Vector2(), duration).set_delay(delay)
-	card.tween.tween_property(card, "size", _get_card_size(), duration).from(stockpile.size).set_delay(delay)
-	card.tween.tween_property(card, "disabled", false, 0).from(true).set_delay(duration + delay)
+	for pile_idx in cards.size():
+		var card: UiCard = cards[pile_idx]
+		card.global_position = stockpile.global_position
+		card.size = stockpile.size
+		card.z_index = 100
+		
+		var card_delay = delay * pile_idx
+		tween.tween_property(card, "position", Vector2(), duration).set_delay(card_delay)
+		tween.tween_property(card, "size", _get_card_size(), duration).from(stockpile.size).set_delay(card_delay)
+		
+		# reset things
+		tween.tween_property(card, "disabled", false, 0).from(true).set_delay(duration + card_delay)
+		tween.tween_property(card, "z_index", 0, 0).set_delay(duration + card_delay)
+	return tween
 
 
-func _animate_card_move(card: UiCard, initial_position: Vector2):
-	card.stop_and_create_tween()
-	card.global_position = initial_position
-	card.tween.tween_property(card, "position", Vector2(), 0.05)
-
-
-func _animate_stack_complete(card: UiCard, initial_position: Vector2):
-	card.stop_and_create_tween()
-	card.global_position = initial_position
+func _animate_cards_move_to_0(cards: Array) -> Tween:
+	var tween := create_tween().set_parallel()
+	var duration = 0.05
 	
+	for card in cards:
+		tween.tween_property(card, "position", Vector2(), duration)
+	return tween
+
+
+func _animate_stack_complete(cards: Array) -> Tween:
+	var tween := create_tween().set_parallel()
 	var duration = 0.25
-	card.tween.set_parallel()
-	card.tween.tween_property(card, "position", Vector2(), duration)
-	card.tween.tween_property(card, "size", stockpile.size, duration).from(_get_card_size())
+	
+	for card in cards:
+		tween.set_parallel()
+		tween.tween_property(card, "position", Vector2(), duration)
+		tween.tween_property(card, "size", stockpile.size, duration).from(_get_card_size())
+	return tween
 
 
 func _undo_history(history: Gamestate.History):
