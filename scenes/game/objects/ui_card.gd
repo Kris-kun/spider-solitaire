@@ -65,6 +65,11 @@ func stop_and_create_tween() -> void:
 	tween = create_tween()
 
 
+func tween_finished() -> void:
+	if tween != null:
+		await tween.finished
+
+
 func get_tableau_pile():
 	return _tableau_pile
 

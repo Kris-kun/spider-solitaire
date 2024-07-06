@@ -40,11 +40,12 @@ func _add_card(card: UiCard):
 	# add parent control for card because this makes it easy to animate
 	# because we can just use position 0x0 instead of calculating where the
 	# card should go
-	var parent = Control.new()
+	var parent := Control.new()
 	parent.add_child(card)
 	card.anchors_preset = PRESET_FULL_RECT
 	$LineOrientation.add_child(parent)
 	_update_spacing_multiplier()
+	$LineOrientation.resize()
 
 
 func remove_card(card: UiCard):
@@ -55,6 +56,7 @@ func _remove_card(card: UiCard):
 	$LineOrientation.remove_child(card.get_parent())
 	card.get_parent().remove_child(card)
 	_update_spacing_multiplier()
+	$LineOrientation.resize()
 
 
 func get_cards():
@@ -78,6 +80,7 @@ func reveal_topmost_card():
 	if get_card_count() > 0:
 		get_card(-1).revealed = true
 		_update_spacing_multiplier()
+		$LineOrientation.resize()
 
 
 func _calculate_card_height() -> float:

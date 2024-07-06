@@ -29,6 +29,10 @@ var completed_stacks: Array[int]:
 	get:
 		return _savestate.completed_stacks
 
+## if multiple steps should be done in one call
+## for example moving a card might immediately complete a stack if this is set to true
+var multiple_steps_at_once: bool
+
 var _mode: Mode:
 	set(value):
 		_savestate.mode = value
@@ -37,6 +41,7 @@ var _mode: Mode:
 var _history: Array[History]
 var _savestate: Savestate = Savestate.new()
 var _rng = RandomNumberGenerator.new()
+
 
 func _init():
 	reset(Mode.SINGLE_COLOR)
@@ -105,9 +110,10 @@ func move_cards(pile_index_source: int, first_card_index: int, pile_index_destin
 	var result := CardMoveResult.new(true)
 	
 	# check if we got a full stack
-	if check_complete_stack(dest_pile):
-		_remove_complete_stack(pile_index_destination)
-		result.stack_complete = true
+	if multiple_steps_at_once:
+		if _check_complete_stack(dest_pile):
+			_remove_complete_stack(pile_index_destination)
+			result.stack_complete = true
 	
 	if completed_stacks.size() == 8:
 		Savestate.delete()
@@ -136,7 +142,15 @@ func check_can_move(pile_index: int, card_index: int) -> bool:
 	return true
 
 
-func check_complete_stack(pile: TableauPile) -> bool:
+func try_complete_stack(pile_idx: int) -> bool:
+	var pile := tableau_piles[pile_idx]
+	if _check_complete_stack(pile):
+		_remove_complete_stack(pile_idx)
+		return true
+	return false
+
+
+func _check_complete_stack(pile: TableauPile) -> bool:
 	if pile.cards.size() < 13:
 		return false
 	
@@ -171,11 +185,12 @@ func handout() -> HandoutResult:
 	_history.push_back(HandoutHistory.new())
 	
 	# check for completed stacks
-	for i in tableau_piles.size():
-		var pile := tableau_piles[i]
-		if check_complete_stack(pile):
-			result.stack_complete_pile_indices.push_back(i)
-			_remove_complete_stack(i)
+	if multiple_steps_at_once:
+		for i in tableau_piles.size():
+			var pile := tableau_piles[i]
+			if _check_complete_stack(pile):
+				result.stack_complete_pile_indices.push_back(i)
+				_remove_complete_stack(i)
 	
 	save()
 	_print_state()
