@@ -30,6 +30,16 @@ window/handheld/orientation=4
 version_control/plugin_name="GitPlugin"
 version_control/autoload_on_startup=true
 
+[file_customization]
+
+folder_colors={
+"res://addons/": "gray",
+"res://assets/": "yellow",
+"res://general/": "blue",
+"res://localization/": "yellow",
+"res://scenes/": "blue"
+}
+
 [internationalization]
 
 locale/translations=PackedStringArray("res://localization/localizations.de.translation", "res://localization/localizations.en.translation")
