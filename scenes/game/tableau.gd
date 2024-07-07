@@ -8,8 +8,6 @@ const COLUMN_GAP = 30.0
 var dragging_pile_origin: UiTableauPile
 var drag_offset: Vector2
 
-var _tweens: Array[Tween] = []
-
 const CARD_RESOURCE = preload("res://scenes/game/objects/ui_card.tscn")
 
 @onready var pile_container := $PileContainerMaxSize/PileContainer
@@ -72,15 +70,15 @@ func create_frontend_cards():
 
 func handout_cards():
 	var result := Gamestate.handout()
-	var handout_cards := result.handout_cards
+	var cards := result.handout_cards
 	var moving_cards = []
 	
 	# create cards
-	for pile_idx in handout_cards.size():
+	for pile_idx in cards.size():
 		var pile := get_tableau_pile(pile_idx) as UiTableauPile
-		var card := create_card_instance(handout_cards[pile_idx].type)
+		var card := create_card_instance(cards[pile_idx].type)
 		card.size = stockpile.size # because stockpile size might differ from normal card size
-		card.revealed = handout_cards[pile_idx].revealed
+		card.revealed = cards[pile_idx].revealed
 		pile.add_card(card)
 		moving_cards.push_back(card)
 	

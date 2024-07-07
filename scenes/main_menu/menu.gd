@@ -23,8 +23,7 @@ func _on_play_pressed(colors: int) -> void:
 			Gamestate.reset(Gamestate.Mode.FOUR_COLORS)
 	
 	Gamestate.save()
-	
-	_open_gamescreen()
+	SceneUtils.change_scene_to_gamescreen(get_tree())
 
 
 func _on_continue_pressed() -> void:
@@ -32,16 +31,12 @@ func _on_continue_pressed() -> void:
 		return
 	
 	Gamestate.load()
-	_open_gamescreen()
+	SceneUtils.change_scene_to_gamescreen(get_tree())
 
 
 func _on_quit_pressed() -> void:
 	get_tree().quit()
 
 
-func _open_gamescreen():
-	get_tree().change_scene_to_file("res://scenes/game/gamescreen.tscn")
-
-
-func _append_colors(node: Button, colors: String):
+func _append_colors(node: Button, colors: String) -> void:
 	node.text = " " + colors + " \n" + tr(node.text)

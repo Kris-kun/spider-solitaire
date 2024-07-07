@@ -115,11 +115,7 @@ func move_cards(pile_index_source: int, first_card_index: int, pile_index_destin
 			_remove_complete_stack(pile_index_destination)
 			result.stack_complete = true
 	
-	if completed_stacks.size() == 8:
-		Savestate.delete()
-	else:
-		save()
-	_print_state()
+	_save_or_delete()
 	
 	return result
 
@@ -146,6 +142,7 @@ func try_complete_stack(pile_idx: int) -> bool:
 	var pile := tableau_piles[pile_idx]
 	if _check_complete_stack(pile):
 		_remove_complete_stack(pile_idx)
+		_save_or_delete()
 		return true
 	return false
 
@@ -192,8 +189,7 @@ func handout() -> HandoutResult:
 				result.stack_complete_pile_indices.push_back(i)
 				_remove_complete_stack(i)
 	
-	save()
-	_print_state()
+	_save_or_delete()
 	
 	return result
 
@@ -219,7 +215,6 @@ func undo() -> Array[History]:
 		_undo_history(history)
 	
 	save()
-	_print_state()
 	
 	return histories
 
@@ -294,28 +289,11 @@ func _undo_history(history: History):
 			pile.cards.push_back(card)
 
 
-## temporary. TODO: delete
-func _print_state():
-	print("###############################")
-	
-	var row = 0
-	while true:
-		var line := ""
-		var stop := true
-		for pile in tableau_piles:
-			if pile.cards.size() <= row:
-				line += "  -"
-			else:
-				line += " %2s" % pile.cards[row].get_value_str()
-				stop = false
-		
-		if stop:
-			break
-		
-		print(line)
-		row += 1
-	
-	print("###############################")
+func _save_or_delete() -> void:
+	if completed_stacks.size() == 8:
+		Savestate.delete()
+	else:
+		save()
 
 
 class History:

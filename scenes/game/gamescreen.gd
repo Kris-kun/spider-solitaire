@@ -38,7 +38,7 @@ func _on_undo_pressed() -> void:
 
 
 func _on_menu_pressed() -> void:
-	get_tree().change_scene_to_file("res://scenes/main_menu/menu.tscn")
+	SceneUtils.change_scene_to_menu(get_tree())
 
 
 func _on_replay_pressed() -> void:
