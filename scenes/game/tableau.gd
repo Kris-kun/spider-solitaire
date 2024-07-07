@@ -72,15 +72,15 @@ func create_frontend_cards():
 
 func handout_cards():
 	var result := Gamestate.handout()
-	var cards := result.handout_cards
+	var handout_cards := result.handout_cards
 	var moving_cards = []
 	
 	# create cards
-	for pile_idx in cards.size():
+	for pile_idx in handout_cards.size():
 		var pile := get_tableau_pile(pile_idx) as UiTableauPile
-		var card := create_card_instance(cards[pile_idx].type)
+		var card := create_card_instance(handout_cards[pile_idx].type)
 		card.size = stockpile.size # because stockpile size might differ from normal card size
-		card.revealed = cards[pile_idx].revealed
+		card.revealed = handout_cards[pile_idx].revealed
 		pile.add_card(card)
 		moving_cards.push_back(card)
 	
@@ -95,9 +95,6 @@ func handout_cards():
 			await tween.finished
 		
 		if Gamestate.try_complete_stack(pile.get_tableau_pile_index()):
-			var stack := Control.new()
-			complete_stacks_container.add_child(stack)
-		
 			# get cards to move (from dragging pile and target pile)
 			var cardsArr = []
 			var king_index = pile.get_card_count() - 13
@@ -105,6 +102,7 @@ func handout_cards():
 				var card := pile.get_card(idx)
 				cardsArr.push_back([card, card.global_position])
 			
+			var stack := Control.new()
 			# move cards to completed stack
 			for arr in cardsArr:
 				var card: UiCard = arr[0]
@@ -112,7 +110,11 @@ func handout_cards():
 				card.movable = true # not really movable but we don't want darkened cards there
 				card.get_tableau_pile().remove_card(card)
 				stack.add_child(card)
-				card.global_position = arr[1]
+			complete_stacks_container.add_child(stack)
+			complete_stacks_container.resize()
+			
+			for arr in cardsArr:
+				arr[0].global_position = arr[1]
 			
 			tween = _animate_stack_complete(cardsArr.map(func(v): return v[0]))
 			
