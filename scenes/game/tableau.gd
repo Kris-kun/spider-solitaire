@@ -222,13 +222,13 @@ func _on_card_drag_stopped():
 		if not result.legal:
 			target_pile = dragging_pile_origin
 	
-	var moving_cards: Array = dragging_pile.get_cards()
+	var moving_cards: Array = dragging_pile.get_cards().map(func(card): return [card, card.global_position])
 	
-	for card in moving_cards:
-		var pos = card.global_position
-		card.set_tableau_pile(target_pile)
-		card.global_position = pos
-	var tween := _animate_cards_move_to_0(moving_cards)
+	for arr in moving_cards:
+		arr[0].set_tableau_pile(target_pile)
+		arr[0].global_position = arr[1]
+	
+	var tween := _animate_cards_move_to_0(moving_cards.map(func(v): return v[0]))
 	
 	dragging_pile_origin.reveal_topmost_card()
 	_update_movable_state()
@@ -323,7 +323,7 @@ func _animate_handout_card(cards: Array) -> Tween:
 		var card: UiCard = cards[pile_idx]
 		card.global_position = stockpile_container.global_position
 		card.global_position += Vector2(stockpile_container.spacing * stockpile_container.get_child_count(), 0)
-		card.size = stockpile_container.size
+		card.set_deferred("size", stockpile_container.size)
 		card.z_index = 100
 		
 		var card_delay = delay * pile_idx

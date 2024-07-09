@@ -59,7 +59,7 @@ func _remove_card(card: UiCard):
 	$LineOrientation.resize()
 
 
-func get_cards():
+func get_cards() -> Array:
 	return _card_container.get_children().map(func(parent): return parent.get_child(0))
 
 
