@@ -11,8 +11,9 @@ var drag_offset: Vector2
 const CARD_RESOURCE = preload("res://scenes/game/objects/ui_card.tscn")
 
 @onready var pile_container := $PileContainerMaxSize/PileContainer
-@onready var stockpile := $StockpileButton
 @onready var complete_stacks_container := $CompleteStacksContainer
+@onready var stockpile_button := $StockpileButton
+@onready var stockpile_container := $StockpileContainer
 @onready var dragging_pile := $DraggingPile
 
 
@@ -35,6 +36,7 @@ func _input(event: InputEvent) -> void:
 
 func reset_cards():
 	NodeUtils.remove_children_queue_free(complete_stacks_container)
+	NodeUtils.remove_children_queue_free(stockpile_container)
 	for pile: UiTableauPile in get_tableau_piles():
 		for card in pile.get_cards():
 			pile.remove_card(card)
@@ -50,15 +52,15 @@ func create_frontend_cards():
 			card.revealed = Gamestate.tableau_piles[column].cards[row].revealed
 			pile.add_card(card)
 	
-	stockpile.visible = not Gamestate.stockpile.is_empty()
+	_update_stockpile()
 	
 	for color in Gamestate.completed_stacks:
 		var stack = Control.new()
 		
 		for value in 13:
 			var card := Card.fromColorAndValue(color, 13 - value)
-			var ui_card = create_card_instance(card.type)
-			ui_card.size = stockpile.size
+			var ui_card := create_card_instance(card.type)
+			ui_card.size = stockpile_container.size
 			ui_card.revealed = true
 			ui_card.disabled = true
 			stack.add_child(ui_card)
@@ -77,12 +79,12 @@ func handout_cards():
 	for pile_idx in cards.size():
 		var pile := get_tableau_pile(pile_idx) as UiTableauPile
 		var card := create_card_instance(cards[pile_idx].type)
-		card.size = stockpile.size # because stockpile size might differ from normal card size
+		card.size = stockpile_container.size # because stockpile size might differ from normal card size
 		card.revealed = cards[pile_idx].revealed
 		pile.add_card(card)
 		moving_cards.push_back(card)
 	
-	stockpile.visible = not Gamestate.stockpile.is_empty()
+	_update_stockpile()
 	_update_movable_state()
 	
 	var tween := _animate_handout_card(moving_cards)
@@ -287,10 +289,25 @@ func _get_intersecting_pile(card: UiCard) -> UiTableauPile:
 	return target_pile
 
 
-func _update_movable_state():
+func _update_movable_state() -> void:
 	for pile: UiTableauPile in get_tableau_piles():
 		for card: UiCard in pile.get_cards():
 			card.movable = Gamestate.check_can_move(pile.get_tableau_pile_index(), card.get_card_index())
+
+
+func _update_stockpile() -> void:
+	var amount := Gamestate.get_stockpile_stacks_amount()
+	var diff = amount - stockpile_container.get_child_count()
+	if diff > 0:
+		for i in diff:
+			var button := stockpile_button.duplicate()
+			button.visible = true
+			stockpile_container.add_child(button)
+	elif diff < 0:
+		for i in -diff:
+			var child = stockpile_container.get_child(0)
+			stockpile_container.remove_child(child)
+			child.queue_free()
 
 
 func _on_stockpile_button_pressed() -> void:
@@ -304,13 +321,14 @@ func _animate_handout_card(cards: Array) -> Tween:
 	
 	for pile_idx in cards.size():
 		var card: UiCard = cards[pile_idx]
-		card.global_position = stockpile.global_position
-		card.size = stockpile.size
+		card.global_position = stockpile_container.global_position
+		card.global_position += Vector2(stockpile_container.spacing * stockpile_container.get_child_count(), 0)
+		card.size = stockpile_container.size
 		card.z_index = 100
 		
 		var card_delay = delay * pile_idx
 		tween.tween_property(card, "position", Vector2(), duration).set_delay(card_delay)
-		tween.tween_property(card, "size", _get_card_size(), duration).from(stockpile.size).set_delay(card_delay)
+		tween.tween_property(card, "size", _get_card_size(), duration).from(stockpile_container.size).set_delay(card_delay)
 		
 		# reset things
 		tween.tween_property(card, "disabled", false, 0).from(true).set_delay(duration + card_delay)
@@ -334,7 +352,7 @@ func _animate_stack_complete(cards: Array) -> Tween:
 	for card in cards:
 		tween.set_parallel()
 		tween.tween_property(card, "position", Vector2(), duration)
-		tween.tween_property(card, "size", stockpile.size, duration).from(_get_card_size())
+		tween.tween_property(card, "size", stockpile_container.size, duration).from(_get_card_size())
 	return tween
 
 
@@ -346,7 +364,7 @@ func _undo_history(history: Gamestate.History):
 			var card = pile.get_card(-1)
 			pile.remove_card(card)
 			card.queue_free()
-		stockpile.visible = true
+		_update_stockpile()
 	elif history is Gamestate.MoveHistory:
 		print_debug("Undoing MoveHistory")
 		

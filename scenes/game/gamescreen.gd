@@ -23,7 +23,7 @@ func _unhandled_key_input(event: InputEvent) -> void:
 		match event.keycode:
 			KEY_ESCAPE:
 				get_viewport().set_input_as_handled()
-				get_tree().change_scene_to_file("res://scenes/main_menu/menu.tscn")
+				SceneUtils.change_scene_to_menu(get_tree())
 			KEY_Z: # basically ctrl+z but using ctrl is useless here
 				get_viewport().set_input_as_handled()
 				_on_undo_pressed()

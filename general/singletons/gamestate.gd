@@ -81,6 +81,11 @@ func load():
 	_history = []
 
 
+func get_stockpile_stacks_amount() -> int:
+	@warning_ignore("integer_division")
+	return stockpile.size() / 10
+
+
 ## Moves all cards with index >= first_card_index from the source to the destination tableau pile
 ## returns true if it is a legal move, false if not (meaning nothing changes)
 func move_cards(pile_index_source: int, first_card_index: int, pile_index_destination: int) -> CardMoveResult:
