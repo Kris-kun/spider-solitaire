@@ -34,6 +34,7 @@ var _grayout_material
 
 @onready var back_texture := $BackTexture
 @onready var front_texture := $FrontTexture
+@onready var hint_texture := $HintTexture
 @onready var invisible_button := $InvisibleButton
 
 
@@ -88,6 +89,12 @@ func set_tableau_pile(pile: UiTableauPile):
 func get_card_index() -> int:
 	return get_parent().get_index()
 	#return get_index()
+
+
+func animate_hint() -> void:
+	hint_texture.visible = true
+	await get_tree().create_timer(2.0).timeout
+	hint_texture.visible = false
 
 
 func _refresh_textures():

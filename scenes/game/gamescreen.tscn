@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://bmqnrwvabx2ar"]
+[gd_scene load_steps=16 format=3 uid="uid://bmqnrwvabx2ar"]
 
 [ext_resource type="Script" path="res://scenes/game/gamescreen.gd" id="1_6jg1x"]
 [ext_resource type="Theme" uid="uid://choyswlp5dmrq" path="res://general/custom_theme.tres" id="1_l3yr2"]
@@ -9,6 +9,7 @@
 [ext_resource type="Texture2D" uid="uid://cs2v6fh7c7s8r" path="res://assets/img/card-backside-highlighted.png" id="4_chfa1"]
 [ext_resource type="Script" path="res://general/nodes/line_orientation.gd" id="5_pc48o"]
 [ext_resource type="Script" path="res://scenes/game/pile_container_max_size.gd" id="6_1483l"]
+[ext_resource type="Texture2D" uid="uid://dhtfk4b6515pw" path="res://assets/img/hint.png" id="6_eq4kt"]
 [ext_resource type="Texture2D" uid="uid://jkp38lpsubxt" path="res://assets/img/undo.png" id="6_i45ew"]
 [ext_resource type="Script" path="res://scenes/game/tableau.gd" id="6_ny11j"]
 [ext_resource type="Texture2D" uid="uid://b6mbo6n5xf14i" path="res://assets/img/menu.png" id="7_f31bj"]
@@ -82,6 +83,21 @@ theme_override_constants/margin_right = 50
 [node name="UndoButton" type="TextureButton" parent="Header/UndoMarginContainer"]
 layout_mode = 2
 texture_normal = ExtResource("6_i45ew")
+
+[node name="HintButton" type="TextureButton" parent="Header"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -32.0
+offset_top = -32.0
+offset_right = 32.0
+offset_bottom = 32.0
+grow_horizontal = 2
+grow_vertical = 2
+texture_normal = ExtResource("6_eq4kt")
 
 [node name="Tableau" type="Control" parent="."]
 layout_mode = 1
@@ -331,6 +347,7 @@ text = "MENU_EXIT"
 
 [connection signal="pressed" from="Header/MenuMarginContainer/MenuButton" to="." method="_on_menu_pressed"]
 [connection signal="pressed" from="Header/UndoMarginContainer/UndoButton" to="." method="_on_undo_pressed"]
+[connection signal="pressed" from="Header/HintButton" to="." method="_on_hint_pressed"]
 [connection signal="pressed" from="Tableau/StockpileButton" to="Tableau" method="_on_stockpile_button_pressed"]
 [connection signal="pressed" from="WinScreenContainer/CenterContainer/PanelContainer/MarginContainer/VBoxContainer2/VBoxContainer/Button" to="." method="_on_replay_pressed"]
 [connection signal="pressed" from="WinScreenContainer/CenterContainer/PanelContainer/MarginContainer/VBoxContainer2/VBoxContainer/Button2" to="." method="_on_newgame_pressed"]

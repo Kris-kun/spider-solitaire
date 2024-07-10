@@ -27,6 +27,9 @@ func _unhandled_key_input(event: InputEvent) -> void:
 			KEY_Z: # basically ctrl+z but using ctrl is useless here
 				get_viewport().set_input_as_handled()
 				_on_undo_pressed()
+			KEY_H: # h = hint
+				get_viewport().set_input_as_handled()
+				_on_hint_pressed()
 
 
 func _on_game_finished() -> void:
@@ -55,3 +58,11 @@ func _on_newgame_pressed() -> void:
 
 func _on_quit_pressed() -> void:
 	get_tree().quit()
+
+
+func _on_hint_pressed() -> void:
+	var hint := Gamestate.get_next_hint()
+	if hint != null:
+		tableau.get_tableau_pile(hint.pile_index_source).get_card(hint.card_index_source).animate_hint()
+		await get_tree().create_timer(0.2).timeout
+		tableau.get_tableau_pile(hint.pile_index_destination).get_card(-1).animate_hint()
