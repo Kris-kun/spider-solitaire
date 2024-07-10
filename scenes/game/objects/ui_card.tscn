@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://byhxxdlegf4rs"]
+[gd_scene load_steps=12 format=3 uid="uid://byhxxdlegf4rs"]
 
 [ext_resource type="Script" path="res://scenes/game/objects/ui_card.gd" id="1_nltsn"]
 [ext_resource type="Texture2D" uid="uid://b4s4c1fp51qec" path="res://assets/img/card-backside.png" id="2_x01l0"]
@@ -17,6 +17,39 @@ atlas = ExtResource("3_an1uv")
 region = Rect2(0, 0, 150, 200)
 
 [sub_resource type="ImageTexture" id="ImageTexture_i4boh"]
+
+[sub_resource type="Animation" id="Animation_y3fq7"]
+resource_name = "hint_animation"
+length = 2.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("HintTexture:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("HintTexture:modulate:a")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.3, 1.9, 2),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [0.0, 1.0, 1.0, 0.0]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_bphls"]
+_data = {
+"hint_animation": SubResource("Animation_y3fq7")
+}
 
 [node name="Card" type="Control" groups=["cards"]]
 layout_mode = 3
@@ -49,6 +82,7 @@ expand_mode = 1
 
 [node name="HintTexture" type="TextureRect" parent="."]
 visible = false
+modulate = Color(1, 1, 1, 0)
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -72,5 +106,10 @@ grow_vertical = 2
 texture_pressed = SubResource("ImageTexture_i4boh")
 texture_hover = ExtResource("4_1ceq4")
 stretch_mode = 0
+
+[node name="HintAnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_bphls")
+}
 
 [connection signal="gui_input" from="InvisibleButton" to="." method="_on_button_gui_input"]

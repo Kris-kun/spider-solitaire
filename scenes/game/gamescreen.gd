@@ -61,8 +61,4 @@ func _on_quit_pressed() -> void:
 
 
 func _on_hint_pressed() -> void:
-	var hint := Gamestate.get_next_hint()
-	if hint != null:
-		tableau.get_tableau_pile(hint.pile_index_source).get_card(hint.card_index_source).animate_hint()
-		await get_tree().create_timer(0.2).timeout
-		tableau.get_tableau_pile(hint.pile_index_destination).get_card(-1).animate_hint()
+	tableau.show_hint()
