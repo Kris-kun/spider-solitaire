@@ -244,7 +244,7 @@ func get_next_hint() -> MoveHint:
 		
 		var card := pile.cards[card_index]
 		var card_above := null if card_index == 0 else pile.cards[card_index - 1]
-		if not card_above.revealed:
+		if card_above != null and not card_above.revealed:
 			card_above = null
 		
 		for pile_index_dst in tableau_piles.size():
