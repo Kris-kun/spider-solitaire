@@ -372,7 +372,7 @@ func _animate_stack_complete(cards: Array) -> Tween:
 
 
 func _undo_history(history: History):
-	if history is History.HandoutHistory:
+	if history is HandoutHistory:
 		print_debug("Undoing HandoutHistory")
 		
 		for pile: UiTableauPile in get_tableau_piles():
@@ -380,7 +380,7 @@ func _undo_history(history: History):
 			pile.remove_card(card)
 			card.queue_free()
 		_update_stockpile()
-	elif history is History.MoveHistory:
+	elif history is MoveHistory:
 		print_debug("Undoing MoveHistory")
 		
 		var pile_from: UiTableauPile = get_tableau_pile(history.pile_index_destination)
@@ -388,11 +388,11 @@ func _undo_history(history: History):
 		while pile_from.get_card_count() > history.pile_size_destination:
 			var card = pile_from.get_card(history.pile_size_destination)
 			card.set_tableau_pile(pile_to)
-	elif history is History.RevealHistory:
+	elif history is RevealHistory:
 		print_debug("Undoing RevealHistory")
 		
 		get_tableau_pile(history.pile_index).get_card(-1).revealed = false
-	elif history is History.StackCompleteHistory:
+	elif history is StackCompleteHistory:
 		print_debug("Undoing StackCompleteHistory")
 		
 		var stack = complete_stacks_container.get_child(-1)

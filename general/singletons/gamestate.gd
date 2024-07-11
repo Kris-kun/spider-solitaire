@@ -43,10 +43,6 @@ var _savestate: Savestate = Savestate.new()
 var _rng = RandomNumberGenerator.new()
 
 
-func _init():
-	reset(Mode.SINGLE_COLOR)
-
-
 func reset(mode: Mode ):
 	if mode == Mode.SAME_COLOR_SAME_SEED:
 		mode = _mode
@@ -88,9 +84,9 @@ func get_stockpile_stacks_amount() -> int:
 
 ## Moves all cards with index >= first_card_index from the source to the destination tableau pile
 ## returns true if it is a legal move, false if not (meaning nothing changes)
-func move_cards(pile_index_source: int, first_card_index: int, pile_index_destination: int) -> History.CardMoveResult:
+func move_cards(pile_index_source: int, first_card_index: int, pile_index_destination: int) -> CardMoveResult:
 	if pile_index_source == pile_index_destination:
-		return History.CardMoveResult.new(false)
+		return CardMoveResult.new(false)
 	
 	var source_pile := tableau_piles[pile_index_source]
 	var source_card := source_pile.cards[first_card_index]
@@ -100,9 +96,9 @@ func move_cards(pile_index_source: int, first_card_index: int, pile_index_destin
 	if not dest_pile.cards.is_empty():
 		var dest_card_parent := dest_pile.cards[-1]
 		if source_card.get_value() + 1 != dest_card_parent.get_value():
-			return History.CardMoveResult.new(false)
+			return CardMoveResult.new(false)
 	
-	_history.push_back(History.MoveHistory.new(pile_index_source, first_card_index, pile_index_destination, dest_pile.cards.size()))
+	_history.push_back(MoveHistory.new(pile_index_source, first_card_index, pile_index_destination, dest_pile.cards.size()))
 	
 	# really move the cards now
 	var moving_cards: Array[Card] = []
@@ -112,7 +108,7 @@ func move_cards(pile_index_source: int, first_card_index: int, pile_index_destin
 	
 	_reveal_tableau_card(pile_index_source)
 	
-	var result := History.CardMoveResult.new(true)
+	var result := CardMoveResult.new(true)
 	
 	# check if we got a full stack
 	if multiple_steps_at_once:
@@ -169,22 +165,22 @@ func _check_complete_stack(pile: TableauPile) -> bool:
 	return false
 
 
-func handout() -> History.HandoutResult:
+func handout() -> HandoutResult:
 	if stockpile.is_empty():
-		return History.HandoutResult.new([])
+		return HandoutResult.new([])
 	
 	var any_pile_empty = tableau_piles.any(func(pile): return pile.cards.is_empty())
 	if any_pile_empty:
-		return History.HandoutResult.new([])
+		return HandoutResult.new([])
 	
 	var cards: Array[Card] = []
-	var result := History.HandoutResult.new(cards)
+	var result := HandoutResult.new(cards)
 	for pile in tableau_piles:
 		var card = Card.new(stockpile.pop_back(), true)
 		cards.append(card)
 		pile.cards.append(card)
 	
-	_history.push_back(History.HandoutHistory.new())
+	_history.push_back(HandoutHistory.new())
 	
 	# check for completed stacks
 	if multiple_steps_at_once:
@@ -300,32 +296,32 @@ func _reveal_tableau_card(pile_index: int):
 		return
 	
 	pile.cards[-1].revealed = true
-	_history.push_back(History.RevealHistory.new(pile_index))
+	_history.push_back(RevealHistory.new(pile_index))
 
 
 func _remove_complete_stack(pile_index: int):
 	var pile := tableau_piles[pile_index]
 	completed_stacks.push_back(pile.cards[-1].get_color())
 	pile.cards.resize(pile.cards.size() - 13)
-	_history.push_back(History.StackCompleteHistory.new(pile_index))
+	_history.push_back(StackCompleteHistory.new(pile_index))
 	_reveal_tableau_card(pile_index)
 
 
 func _undo_history(history: History):
-	if history is History.HandoutHistory:
+	if history is HandoutHistory:
 		for i in tableau_piles.size():
 			var card: Card = tableau_piles[-1 - i].cards.pop_back()
 			stockpile.push_back(card.type)
-	elif history is History.MoveHistory:
+	elif history is MoveHistory:
 		var moving_cards: Array[Card] = []
 		var pile_from := tableau_piles[history.pile_index_destination]
 		var pile_to := tableau_piles[history.pile_index_source]
 		while pile_from.cards.size() > history.pile_size_destination:
 			moving_cards.push_front(pile_from.cards.pop_back())
 		pile_to.cards += moving_cards
-	elif history is History.RevealHistory:
+	elif history is RevealHistory:
 		tableau_piles[history.pile_index].cards[-1].revealed = false
-	elif history is History.StackCompleteHistory:
+	elif history is StackCompleteHistory:
 		var pile := tableau_piles[history.pile_index]
 		var color = completed_stacks.pop_back()
 		for i in 13:
