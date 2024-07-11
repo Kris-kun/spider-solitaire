@@ -11,6 +11,8 @@ func _ready() -> void:
 	_append_colors($CenterContainer/VBoxContainer/VBoxContainer/PlayButton1, "♠")
 	_append_colors($CenterContainer/VBoxContainer/VBoxContainer/PlayButton2, "♠♥")
 	_append_colors($CenterContainer/VBoxContainer/VBoxContainer/PlayButton4, "♠♥♣♦")
+	
+	$CenterContainer/VBoxContainer/ContinueButton.grab_focus()
 
 
 func _on_play_pressed(colors: int) -> void:
