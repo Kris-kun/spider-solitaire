@@ -41,9 +41,10 @@ var _mode: Mode:
 var _history: Array[History]
 var _savestate: Savestate = Savestate.new()
 var _rng = RandomNumberGenerator.new()
+var _last_hint_pile_index := -1
 
 
-func reset(mode: Mode ):
+func reset(mode: Mode):
 	if mode == Mode.SAME_COLOR_SAME_SEED:
 		mode = _mode
 	elif mode == Mode.SAME_COLOR_DIFFERENT_SEED:
@@ -55,6 +56,7 @@ func reset(mode: Mode ):
 	_savestate = Savestate.new()
 	_mode = mode # because the savestate is new and the mode is inside it
 	_history = []
+	_last_hint_pile_index = -1
 	
 	_savestate.deck_seed = _rng.seed
 	seed(_savestate.deck_seed)
@@ -75,6 +77,7 @@ func load():
 	
 	_savestate = savestate
 	_history = []
+	_last_hint_pile_index = -1
 
 
 func get_stockpile_stacks_amount() -> int:
@@ -107,6 +110,7 @@ func move_cards(pile_index_source: int, first_card_index: int, pile_index_destin
 	dest_pile.cards += moving_cards
 	
 	_reveal_tableau_card(pile_index_source)
+	_last_hint_pile_index = -1
 	
 	var result := CardMoveResult.new(true)
 	
@@ -181,6 +185,7 @@ func handout() -> HandoutResult:
 		pile.cards.append(card)
 	
 	_history.push_back(HandoutHistory.new())
+	_last_hint_pile_index = -1
 	
 	# check for completed stacks
 	if multiple_steps_at_once:
@@ -215,6 +220,7 @@ func undo() -> Array[History]:
 	for history in histories:
 		_undo_history(history)
 	
+	_last_hint_pile_index = -1
 	save()
 	
 	return histories
@@ -227,7 +233,12 @@ func get_next_hint() -> MoveHint:
 	
 	# also don't show moves to empty tableaus
 	
-	for pile_index in tableau_piles.size():
+	if _last_hint_pile_index >= tableau_piles.size() - 1:
+		_last_hint_pile_index = -1
+	
+	for pile_index in range(_last_hint_pile_index + 1, tableau_piles.size()):
+		_last_hint_pile_index = pile_index
+		
 		var pile := tableau_piles[pile_index]
 		var card_index := -1
 		for i in range(pile.cards.size() - 1, -1, -1):
@@ -305,6 +316,7 @@ func _remove_complete_stack(pile_index: int):
 	pile.cards.resize(pile.cards.size() - 13)
 	_history.push_back(StackCompleteHistory.new(pile_index))
 	_reveal_tableau_card(pile_index)
+	_last_hint_pile_index = -1
 
 
 func _undo_history(history: History):

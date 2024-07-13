@@ -172,13 +172,24 @@ func show_hint() -> bool:
 		return true
 	
 	var hint := Gamestate.get_next_hint()
-	if hint != null:
-		var pile_source := get_tableau_pile(hint.pile_index_source)
-		for i in range(hint.card_index_source, pile_source.get_card_count()):
-			pile_source.get_card(i).animate_hint()
-		get_tableau_pile(hint.pile_index_destination).get_card(-1).animate_hint(0.25)
-		return true
-	return false
+	if hint == null:
+		return false
+	
+	# stop current hint animation first
+	for pile: UiTableauPile in get_tableau_piles():
+		for card_index in range(pile.get_card_count() - 1, -1, -1):
+			var card := pile.get_card(card_index)
+			if not card.revealed:
+				break
+			card.stop_hint_animation()
+	
+	# start new hint animation
+	var pile_source := get_tableau_pile(hint.pile_index_source)
+	for i in range(hint.card_index_source, pile_source.get_card_count()):
+		pile_source.get_card(i).animate_hint()
+	get_tableau_pile(hint.pile_index_destination).get_card(-1).animate_hint(0.25)
+	return true
+	
 
 
 func is_game_finished() -> bool:

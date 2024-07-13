@@ -29,8 +29,14 @@ var movable: bool = true:
 		movable = value
 		_refresh_textures()
 
-var _tableau_pile
+var _tableau_pile: UiTableauPile
 var _grayout_material
+
+## we need this because the hint animation might have a delay (via await)
+## this way, if we start the animation with a delay for 1 second,
+## but stop it after 0.5 seconds, it will try to stop it even though it didn't even start
+## and after the 1 second timeout, the animation would start anyway
+var _hint_animation_explicitly_stopped: bool
 
 @onready var back_texture := $BackTexture
 @onready var front_texture := $FrontTexture
@@ -39,12 +45,12 @@ var _grayout_material
 @onready var hint_animation := $HintAnimationPlayer
 
 
-func _ready():
+func _ready() -> void:
 	_grayout_material = front_texture.material
 	_refresh_textures()
 
 
-func _on_button_gui_input(event):
+func _on_button_gui_input(event) -> void:
 	if disabled:
 		return
 	
@@ -72,11 +78,11 @@ func tween_finished() -> void:
 		await tween.finished
 
 
-func get_tableau_pile():
+func get_tableau_pile() -> UiTableauPile:
 	return _tableau_pile
 
 
-func set_tableau_pile(pile: UiTableauPile):
+func set_tableau_pile(pile: UiTableauPile) -> void:
 	if _tableau_pile == pile:
 		return
 	
@@ -92,13 +98,23 @@ func get_card_index() -> int:
 
 
 func animate_hint(delay: float = 0.0) -> void:
+	_hint_animation_explicitly_stopped = false
+	hint_animation.stop()
 	if delay > 0.00001:
 		await get_tree().create_timer(delay).timeout
+		
+	if not _hint_animation_explicitly_stopped:
+		hint_animation.play("hint_animation")
+	else:
+		_hint_animation_explicitly_stopped = false
+
+
+func stop_hint_animation() -> void:
+	_hint_animation_explicitly_stopped = true
 	hint_animation.stop()
-	hint_animation.play("hint_animation")
 
 
-func _refresh_textures():
+func _refresh_textures() -> void:
 	if front_texture == null: return
 	
 	back_texture.visible = not revealed
