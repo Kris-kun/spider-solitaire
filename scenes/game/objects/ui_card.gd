@@ -91,7 +91,9 @@ func get_card_index() -> int:
 	return get_parent().get_index()
 
 
-func animate_hint() -> void:
+func animate_hint(delay: float = 0.0) -> void:
+	if delay > 0.00001:
+		await get_tree().create_timer(delay).timeout
 	hint_animation.stop()
 	hint_animation.play("hint_animation")
 

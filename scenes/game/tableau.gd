@@ -165,18 +165,20 @@ func undo() -> void:
 	_update_movable_state()
 
 
-func show_hint() -> void:
+## returns true if another hint is available, false if not
+func show_hint() -> bool:
 	if dragging_pile.visible:
 		print_debug("Cannot show hint while dragging cards")
-		return
+		return true
 	
 	var hint := Gamestate.get_next_hint()
 	if hint != null:
 		var pile_source := get_tableau_pile(hint.pile_index_source)
 		for i in range(hint.card_index_source, pile_source.get_card_count()):
 			pile_source.get_card(i).animate_hint()
-		await get_tree().create_timer(0.25).timeout
-		get_tableau_pile(hint.pile_index_destination).get_card(-1).animate_hint()
+		get_tableau_pile(hint.pile_index_destination).get_card(-1).animate_hint(0.25)
+		return true
+	return false
 
 
 func is_game_finished() -> bool:

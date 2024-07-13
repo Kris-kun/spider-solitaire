@@ -1,6 +1,14 @@
 extends Control
 
 
+enum NotificationType {
+	HINT
+}
+
+const NOTIFICATION_RESOURCE = preload("res://general/nodes/notification.tscn")
+
+var active_notifications: Array[NotificationType] = []
+
 @onready var win_screen_container := $WinScreenContainer
 @onready var tableau := $Tableau
 
@@ -32,6 +40,27 @@ func _unhandled_key_input(event: InputEvent) -> void:
 				_on_hint_pressed()
 
 
+func notify(type: NotificationType, text: String) -> void:
+	if active_notifications.has(type):
+		return
+	
+	active_notifications.append(type)
+	
+	@warning_ignore("shadowed_variable_base_class")
+	var notification: Notification = NOTIFICATION_RESOURCE.instantiate()
+	notification.set_text(text)
+	add_child(notification)
+	
+	notification.position = $Header/HintButton.position
+	notification.position.x -= notification.size.x + 10
+	notification.position.y += $Header/HintButton.size.y/2 - notification.size.y/2
+	
+	await get_tree().create_timer(2.0).timeout
+	
+	active_notifications.erase(type)
+	notification.queue_free()
+
+
 func _on_game_finished() -> void:
 	win_screen_container.visible = true
 
@@ -61,4 +90,6 @@ func _on_quit_pressed() -> void:
 
 
 func _on_hint_pressed() -> void:
-	tableau.show_hint()
+	var hint_available: bool = tableau.show_hint()
+	if not hint_available:
+		notify(NotificationType.HINT, "NOTIFICATION_HINT")

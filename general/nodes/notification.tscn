@@ -1,0 +1,19 @@
+[gd_scene load_steps=2 format=3 uid="uid://8hiyhepbww62"]
+
+[ext_resource type="Script" path="res://general/nodes/notification.gd" id="1_hlkf6"]
+
+[node name="Notification" type="PanelContainer"]
+offset_right = 11.0
+offset_bottom = 21.0
+script = ExtResource("1_hlkf6")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 5
+
+[node name="Label" type="Label" parent="MarginContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
