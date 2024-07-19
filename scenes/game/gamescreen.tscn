@@ -90,6 +90,7 @@ theme_override_constants/margin_top = 20
 
 [node name="MenuButton" type="TextureButton" parent="Header/MenuMarginContainer"]
 layout_mode = 2
+tooltip_text = "BUTTON_MENU_TOOLTIP"
 texture_normal = ExtResource("7_f31bj")
 texture_hover = SubResource("Texture2D_jouf6")
 
@@ -106,6 +107,7 @@ offset_right = 32.0
 offset_bottom = 32.0
 grow_horizontal = 2
 grow_vertical = 2
+tooltip_text = "BUTTON_HINT_TOOLTIP"
 texture_normal = ExtResource("6_eq4kt")
 texture_hover = SubResource("Texture2D_1jfqg")
 
@@ -122,6 +124,7 @@ theme_override_constants/margin_right = 50
 
 [node name="UndoButton" type="TextureButton" parent="Header/UndoMarginContainer"]
 layout_mode = 2
+tooltip_text = "BUTTON_UNDO_TOOLTIP"
 texture_normal = ExtResource("6_i45ew")
 texture_hover = SubResource("Texture2D_rmdel")
 
