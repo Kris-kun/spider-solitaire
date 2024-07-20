@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://bmqnrwvabx2ar"]
+[gd_scene load_steps=21 format=3 uid="uid://bmqnrwvabx2ar"]
 
 [ext_resource type="Script" path="res://scenes/game/gamescreen.gd" id="1_6jg1x"]
 [ext_resource type="Texture2D" uid="uid://brexfr5l20s1u" path="res://assets/img/background.png" id="2_mj0n8"]
@@ -41,6 +41,9 @@ foreground = ExtResource("6_lu4wy")
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_af0nt"]
 bg_color = Color(0, 0, 0, 0.196078)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2mu73"]
+bg_color = Color(0, 0, 0, 0.627451)
 
 [node name="Control" type="Control"]
 texture_filter = 1
@@ -89,6 +92,7 @@ theme_override_constants/margin_top = 20
 [node name="MenuButton" type="TextureButton" parent="Header/MenuMarginContainer"]
 layout_mode = 2
 tooltip_text = "BUTTON_MENU_TOOLTIP"
+focus_mode = 0
 texture_normal = ExtResource("7_f31bj")
 texture_hover = SubResource("Texture2D_jouf6")
 
@@ -106,6 +110,7 @@ offset_bottom = 32.0
 grow_horizontal = 2
 grow_vertical = 2
 tooltip_text = "BUTTON_HINT_TOOLTIP"
+focus_mode = 0
 texture_normal = ExtResource("6_eq4kt")
 texture_hover = SubResource("Texture2D_1jfqg")
 
@@ -123,6 +128,7 @@ theme_override_constants/margin_right = 50
 [node name="UndoButton" type="TextureButton" parent="Header/UndoMarginContainer"]
 layout_mode = 2
 tooltip_text = "BUTTON_UNDO_TOOLTIP"
+focus_mode = 0
 texture_normal = ExtResource("6_i45ew")
 texture_hover = SubResource("Texture2D_rmdel")
 
@@ -306,7 +312,6 @@ offset_right = 1022.0
 offset_bottom = 854.0
 
 [node name="WinScreenContainer" type="Control" parent="."]
-visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -336,6 +341,7 @@ metadata/_edit_lock_ = true
 
 [node name="PanelContainer" type="PanelContainer" parent="WinScreenContainer/CenterContainer"]
 layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_2mu73")
 
 [node name="MarginContainer" type="MarginContainer" parent="WinScreenContainer/CenterContainer/PanelContainer"]
 layout_mode = 2
@@ -359,18 +365,22 @@ horizontal_alignment = 1
 
 [node name="Button" type="Button" parent="WinScreenContainer/CenterContainer/PanelContainer/MarginContainer/VBoxContainer2/VBoxContainer"]
 layout_mode = 2
+focus_mode = 0
 text = "WIN_REPLAY_GAME"
 
 [node name="Button2" type="Button" parent="WinScreenContainer/CenterContainer/PanelContainer/MarginContainer/VBoxContainer2/VBoxContainer"]
 layout_mode = 2
+focus_mode = 0
 text = "WIN_NEW_GAME"
 
 [node name="Button3" type="Button" parent="WinScreenContainer/CenterContainer/PanelContainer/MarginContainer/VBoxContainer2/VBoxContainer"]
 layout_mode = 2
+focus_mode = 0
 text = "WIN_MENU"
 
 [node name="Button4" type="Button" parent="WinScreenContainer/CenterContainer/PanelContainer/MarginContainer/VBoxContainer2"]
 layout_mode = 2
+focus_mode = 0
 text = "MENU_EXIT"
 
 [connection signal="pressed" from="Header/MenuMarginContainer/MenuButton" to="." method="_on_menu_pressed"]

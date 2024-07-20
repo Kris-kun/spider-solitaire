@@ -1,6 +1,10 @@
-[gd_scene load_steps=2 format=3 uid="uid://dtpwfvk0pval8"]
+[gd_scene load_steps=4 format=3 uid="uid://dtpwfvk0pval8"]
 
 [ext_resource type="Script" path="res://scenes/main_menu/menu.gd" id="1_00gu7"]
+[ext_resource type="Texture2D" uid="uid://brexfr5l20s1u" path="res://assets/img/background.png" id="2_l5x05"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qnchj"]
+bg_color = Color(0, 0, 0, 0.0784314)
 
 [node name="Control" type="Control"]
 layout_mode = 3
@@ -10,6 +14,27 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_00gu7")
+metadata/_edit_lock_ = true
+
+[node name="BackgroundTexture" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_l5x05")
+stretch_mode = 1
+metadata/_edit_lock_ = true
+
+[node name="Panel" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_qnchj")
 metadata/_edit_lock_ = true
 
 [node name="CenterContainer" type="CenterContainer" parent="."]
@@ -27,6 +52,7 @@ theme_override_constants/separation = 60
 
 [node name="ContinueButton" type="Button" parent="CenterContainer/VBoxContainer"]
 layout_mode = 2
+focus_mode = 0
 text = "MENU_CONTINUE"
 
 [node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/VBoxContainer"]
@@ -36,20 +62,24 @@ theme_override_constants/separation = 20
 [node name="PlayButton1" type="Button" parent="CenterContainer/VBoxContainer/VBoxContainer"]
 layout_mode = 2
 auto_translate = false
+focus_mode = 0
 text = "MENU_COLOR_1"
 
 [node name="PlayButton2" type="Button" parent="CenterContainer/VBoxContainer/VBoxContainer"]
 layout_mode = 2
 auto_translate = false
+focus_mode = 0
 text = "MENU_COLOR_2"
 
 [node name="PlayButton4" type="Button" parent="CenterContainer/VBoxContainer/VBoxContainer"]
 layout_mode = 2
 auto_translate = false
+focus_mode = 0
 text = "MENU_COLOR_4"
 
 [node name="CloseButton" type="Button" parent="CenterContainer/VBoxContainer"]
 layout_mode = 2
+focus_mode = 0
 text = "MENU_EXIT"
 
 [connection signal="pressed" from="CenterContainer/VBoxContainer/ContinueButton" to="." method="_on_continue_pressed"]
