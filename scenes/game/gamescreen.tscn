@@ -1,7 +1,6 @@
-[gd_scene load_steps=21 format=3 uid="uid://bmqnrwvabx2ar"]
+[gd_scene load_steps=20 format=3 uid="uid://bmqnrwvabx2ar"]
 
 [ext_resource type="Script" path="res://scenes/game/gamescreen.gd" id="1_6jg1x"]
-[ext_resource type="Theme" uid="uid://choyswlp5dmrq" path="res://general/custom_theme.tres" id="1_l3yr2"]
 [ext_resource type="Texture2D" uid="uid://brexfr5l20s1u" path="res://assets/img/background.png" id="2_mj0n8"]
 [ext_resource type="Texture2D" uid="uid://b4s4c1fp51qec" path="res://assets/img/card-backside.png" id="3_dds7k"]
 [ext_resource type="PackedScene" uid="uid://buphukgouix1o" path="res://scenes/game/objects/ui_tableau_pile.tscn" id="3_gvloo"]
@@ -51,7 +50,6 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme = ExtResource("1_l3yr2")
 script = ExtResource("1_6jg1x")
 
 [node name="BackgroundTexture" type="TextureRect" parent="."]

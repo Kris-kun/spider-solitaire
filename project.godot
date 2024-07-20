@@ -44,6 +44,10 @@ folder_colors={
 "res://scenes/": "blue"
 }
 
+[gui]
+
+theme/custom="res://general/custom_theme.tres"
+
 [internationalization]
 
 locale/translations=PackedStringArray("res://localization/localizations.de.translation", "res://localization/localizations.en.translation")

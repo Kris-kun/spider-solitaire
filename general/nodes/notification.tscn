@@ -16,4 +16,3 @@ theme_override_constants/margin_bottom = 5
 
 [node name="Label" type="Label" parent="MarginContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 32
