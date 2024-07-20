@@ -42,6 +42,7 @@ var _history: Array[History]
 var _savestate: Savestate = Savestate.new()
 var _rng = RandomNumberGenerator.new()
 var _last_hint_pile_index := -1
+var _save_timer: SceneTreeTimer
 
 
 func reset(mode: Mode):
@@ -65,8 +66,19 @@ func reset(mode: Mode):
 	_create_initial_face_down_cards()
 	_create_initial_face_up_cards()
 
-
+## Save the current state
+## This function will wait for a short time before saving
+## to not repeatedly save if e.g. the undo button is being pressed too often
 func save():
+	const SAVE_WAIT_TIME := 0.2
+	
+	if _save_timer != null:
+		_save_timer.time_left = SAVE_WAIT_TIME
+		return
+	
+	_save_timer = get_tree().create_timer(SAVE_WAIT_TIME, true, false, true)
+	await _save_timer.timeout
+	_save_timer = null
 	_savestate.save()
 
 
