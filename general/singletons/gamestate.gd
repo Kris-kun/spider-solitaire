@@ -41,7 +41,8 @@ var _mode: Mode:
 var _history: Array[History]
 var _savestate: Savestate = Savestate.new()
 var _rng = RandomNumberGenerator.new()
-var _last_hint_pile_index := -1
+var _last_hint_pile_src_index := -1
+var _last_hint_pile_dst_index := -1
 var _save_timer: SceneTreeTimer
 
 
@@ -57,7 +58,7 @@ func reset(mode: Mode):
 	_savestate = Savestate.new()
 	_mode = mode # because the savestate is new and the mode is inside it
 	_history = []
-	_last_hint_pile_index = -1
+	_reset_hint_status()
 	
 	_savestate.deck_seed = _rng.seed
 	seed(_savestate.deck_seed)
@@ -89,7 +90,7 @@ func load():
 	
 	_savestate = savestate
 	_history = []
-	_last_hint_pile_index = -1
+	_reset_hint_status()
 
 
 func get_stockpile_stacks_amount() -> int:
@@ -122,7 +123,7 @@ func move_cards(pile_index_source: int, first_card_index: int, pile_index_destin
 	dest_pile.cards += moving_cards
 	
 	_reveal_tableau_card(pile_index_source)
-	_last_hint_pile_index = -1
+	_reset_hint_status()
 	
 	var result := CardMoveResult.new(true)
 	
@@ -197,7 +198,7 @@ func handout() -> HandoutResult:
 		pile.cards.append(card)
 	
 	_history.push_back(HandoutHistory.new())
-	_last_hint_pile_index = -1
+	_reset_hint_status()
 	
 	# check for completed stacks
 	if multiple_steps_at_once:
@@ -232,7 +233,7 @@ func undo() -> Array[History]:
 	for history in histories:
 		_undo_history(history)
 	
-	_last_hint_pile_index = -1
+	_reset_hint_status()
 	save()
 	
 	return histories
@@ -245,11 +246,10 @@ func get_next_hint() -> MoveHint:
 	
 	# also don't show moves to empty tableaus
 	
-	if _last_hint_pile_index >= tableau_piles.size() - 1:
-		_last_hint_pile_index = -1
-	
-	for pile_index in range(_last_hint_pile_index + 1, tableau_piles.size()):
-		_last_hint_pile_index = pile_index
+	for pile_index in range(max(0, _last_hint_pile_src_index), tableau_piles.size()):
+		_last_hint_pile_src_index = pile_index
+		if _last_hint_pile_dst_index >= tableau_piles.size() - 1:
+			_last_hint_pile_dst_index = -1
 		
 		var pile := tableau_piles[pile_index]
 		var card_index := -1
@@ -266,7 +266,9 @@ func get_next_hint() -> MoveHint:
 		if card_above != null and not card_above.revealed:
 			card_above = null
 		
-		for pile_index_dst in tableau_piles.size():
+		for pile_index_dst in range(_last_hint_pile_dst_index + 1, tableau_piles.size()):
+			_last_hint_pile_dst_index = pile_index_dst
+			
 			if pile_index_dst == pile_index:
 				continue
 			
@@ -278,6 +280,9 @@ func get_next_hint() -> MoveHint:
 						or card_above == null
 						or card.get_value() + 1 != card_above.get_value()):
 						return MoveHint.new(pile_index, card_index, pile_index_dst)
+	
+	if _last_hint_pile_src_index >= tableau_piles.size() - 1:
+		_reset_hint_status()
 	
 	return null
 
@@ -328,7 +333,7 @@ func _remove_complete_stack(pile_index: int):
 	pile.cards.resize(pile.cards.size() - 13)
 	_history.push_back(StackCompleteHistory.new(pile_index))
 	_reveal_tableau_card(pile_index)
-	_last_hint_pile_index = -1
+	_reset_hint_status()
 
 
 func _undo_history(history: History):
@@ -358,3 +363,8 @@ func _save_or_delete() -> void:
 		Savestate.delete()
 	else:
 		save()
+
+
+func _reset_hint_status() -> void:
+	_last_hint_pile_src_index = -1
+	_last_hint_pile_dst_index = -1
