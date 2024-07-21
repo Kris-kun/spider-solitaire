@@ -1,5 +1,7 @@
 extends Control
 
+var _pressed_colors: int
+
 
 func _ready() -> void:
 	DisplayServer.window_set_min_size(Vector2i(800, 400))
@@ -13,9 +15,22 @@ func _ready() -> void:
 	_append_colors($CenterContainer/VBoxContainer/VBoxContainer/PlayButton4, "♠♥♣♦")
 	
 	#$CenterContainer/VBoxContainer/ContinueButton.grab_focus()
+	
+	$ConfirmationDialog.get_ok_button().focus_mode = FOCUS_NONE
+	$ConfirmationDialog.get_cancel_button().focus_mode = FOCUS_NONE
 
 
 func _on_play_pressed(colors: int) -> void:
+	if Savestate.exists():
+		_pressed_colors = colors
+		$PopupPanel.show()
+		$ConfirmationDialog.show()
+		return
+	else:
+		_start_game(colors)
+
+
+func _start_game(colors: int) -> void:
 	match colors:
 		1:
 			Gamestate.reset(Gamestate.Mode.SINGLE_COLOR)
@@ -42,3 +57,12 @@ func _on_quit_pressed() -> void:
 
 func _append_colors(node: Button, colors: String) -> void:
 	node.text = " " + colors + " \n" + tr(node.text)
+
+
+func _on_confirmation_dialog_canceled() -> void:
+	$PopupPanel.hide()
+
+
+func _on_confirmation_dialog_confirmed() -> void:
+	$PopupPanel.hide()
+	_start_game(_pressed_colors)

@@ -4,6 +4,8 @@ MENU_COLOR_1,1 suit,1 Farbe
 MENU_COLOR_2,2 suits,2 Farben
 MENU_COLOR_4,4 suits,4 Farben
 MENU_EXIT,Exit game,Spiel beenden
+MENU_CONFIRMATION_CONTENT,Reset current game and start anew?,Bestehendes Spiel zurücksetzen und ein neues starten?
+
 WIN_TITLE,Game won,Spiel gewonnen
 WIN_REPLAY_GAME,Replay game (same deck),Erneut spielen (gleiches Deck)
 WIN_NEW_GAME,New game,Neues Spiel
@@ -12,3 +14,6 @@ NOTIFICATION_HINT,No more hints avaiable,Keine Hinweise mehr verfügbar
 BUTTON_MENU_TOOLTIP,Back to menu,Zurück zum Menü
 BUTTON_HINT_TOOLTIP,Show hint,Hinweis anzeigen
 BUTTON_UNDO_TOOLTIP,Undo move,Zug rückgängig machen
+
+BUTTON_OK,OK,OK
+BUTTON_CANCEL,Cancel,Abbrechen

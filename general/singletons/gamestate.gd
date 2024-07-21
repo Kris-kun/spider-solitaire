@@ -287,11 +287,12 @@ func get_next_hint() -> MoveHint:
 
 
 func _get_topmost_movable_card_index(pile: TableauPile) -> int:
+	var card_index := -1
 	for i in range(pile.cards.size() - 1, -1, -1):
 		if not check_can_move(_next_hint_pile_src_index, i):
 			break
-		return i
-	return -1
+		card_index = i
+	return card_index
 
 
 func _init_stockpile():

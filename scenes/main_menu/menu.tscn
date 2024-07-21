@@ -1,10 +1,13 @@
-[gd_scene load_steps=4 format=3 uid="uid://dtpwfvk0pval8"]
+[gd_scene load_steps=5 format=3 uid="uid://dtpwfvk0pval8"]
 
 [ext_resource type="Script" path="res://scenes/main_menu/menu.gd" id="1_00gu7"]
 [ext_resource type="Texture2D" uid="uid://brexfr5l20s1u" path="res://assets/img/background.png" id="2_l5x05"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qnchj"]
 bg_color = Color(0, 0, 0, 0.0784314)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_em7fg"]
+bg_color = Color(0, 0, 0, 0.196078)
 
 [node name="Control" type="Control"]
 layout_mode = 3
@@ -82,8 +85,33 @@ layout_mode = 2
 focus_mode = 0
 text = "MENU_EXIT"
 
+[node name="PopupPanel" type="Panel" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_em7fg")
+metadata/_edit_lock_ = true
+
+[node name="ConfirmationDialog" type="ConfirmationDialog" parent="."]
+mode = 2
+initial_position = 1
+size = Vector2i(752, 155)
+transient = false
+unresizable = true
+borderless = true
+ok_button_text = "BUTTON_OK"
+dialog_text = "MENU_CONFIRMATION_CONTENT"
+dialog_autowrap = true
+cancel_button_text = "BUTTON_CANCEL"
+
 [connection signal="pressed" from="CenterContainer/VBoxContainer/ContinueButton" to="." method="_on_continue_pressed"]
 [connection signal="pressed" from="CenterContainer/VBoxContainer/VBoxContainer/PlayButton1" to="." method="_on_play_pressed" binds= [1]]
 [connection signal="pressed" from="CenterContainer/VBoxContainer/VBoxContainer/PlayButton2" to="." method="_on_play_pressed" binds= [2]]
 [connection signal="pressed" from="CenterContainer/VBoxContainer/VBoxContainer/PlayButton4" to="." method="_on_play_pressed" binds= [4]]
 [connection signal="pressed" from="CenterContainer/VBoxContainer/CloseButton" to="." method="_on_quit_pressed"]
+[connection signal="canceled" from="ConfirmationDialog" to="." method="_on_confirmation_dialog_canceled"]
+[connection signal="confirmed" from="ConfirmationDialog" to="." method="_on_confirmation_dialog_confirmed"]
