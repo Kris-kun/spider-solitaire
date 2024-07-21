@@ -41,8 +41,8 @@ var _mode: Mode:
 var _history: Array[History]
 var _savestate: Savestate = Savestate.new()
 var _rng = RandomNumberGenerator.new()
-var _last_hint_pile_src_index := -1
-var _last_hint_pile_dst_index := -1
+var _next_hint_pile_src_index := 0
+var _next_hint_pile_dst_index := 0
 var _save_timer: SceneTreeTimer
 
 
@@ -246,19 +246,13 @@ func get_next_hint() -> MoveHint:
 	
 	# also don't show moves to empty tableaus
 	
-	for pile_index in range(max(0, _last_hint_pile_src_index), tableau_piles.size()):
-		_last_hint_pile_src_index = pile_index
-		if _last_hint_pile_dst_index >= tableau_piles.size() - 1:
-			_last_hint_pile_dst_index = -1
-		
-		var pile := tableau_piles[pile_index]
-		var card_index := -1
-		for i in range(pile.cards.size() - 1, -1, -1):
-			if not check_can_move(pile_index, i):
-				break
-			card_index = i
-		
+	var hint: MoveHint = null
+	
+	while hint == null and _next_hint_pile_src_index < tableau_piles.size():
+		var pile := tableau_piles[_next_hint_pile_src_index]
+		var card_index := _get_topmost_movable_card_index(pile)
 		if card_index < 0:
+			_next_hint_pile_src_index += 1
 			continue
 		
 		var card := pile.cards[card_index]
@@ -266,25 +260,38 @@ func get_next_hint() -> MoveHint:
 		if card_above != null and not card_above.revealed:
 			card_above = null
 		
-		for pile_index_dst in range(_last_hint_pile_dst_index + 1, tableau_piles.size()):
-			_last_hint_pile_dst_index = pile_index_dst
-			
-			if pile_index_dst == pile_index:
+		while hint == null and _next_hint_pile_dst_index < tableau_piles.size():
+			if _next_hint_pile_dst_index == _next_hint_pile_src_index:
+				_next_hint_pile_dst_index += 1
 				continue
 			
-			var pile_dst := tableau_piles[pile_index_dst]
+			var pile_dst := tableau_piles[_next_hint_pile_dst_index]
 			if not pile_dst.cards.is_empty():
 				var last_card := pile_dst.cards[-1]
 				if card.get_value() + 1 == last_card.get_value():
 					if (card.get_color() == last_card.get_color()
 						or card_above == null
 						or card.get_value() + 1 != card_above.get_value()):
-						return MoveHint.new(pile_index, card_index, pile_index_dst)
+						hint = MoveHint.new(_next_hint_pile_src_index, card_index, _next_hint_pile_dst_index)
+			
+			_next_hint_pile_dst_index += 1
+		
+		if _next_hint_pile_dst_index >= tableau_piles.size():
+			_next_hint_pile_src_index += 1
+			_next_hint_pile_dst_index = 0
 	
-	if _last_hint_pile_src_index >= tableau_piles.size() - 1:
+	if _next_hint_pile_src_index >= tableau_piles.size():
 		_reset_hint_status()
 	
-	return null
+	return hint
+
+
+func _get_topmost_movable_card_index(pile: TableauPile) -> int:
+	for i in range(pile.cards.size() - 1, -1, -1):
+		if not check_can_move(_next_hint_pile_src_index, i):
+			break
+		return i
+	return -1
 
 
 func _init_stockpile():
@@ -366,5 +373,5 @@ func _save_or_delete() -> void:
 
 
 func _reset_hint_status() -> void:
-	_last_hint_pile_src_index = -1
-	_last_hint_pile_dst_index = -1
+	_next_hint_pile_src_index = 0
+	_next_hint_pile_dst_index = 0
