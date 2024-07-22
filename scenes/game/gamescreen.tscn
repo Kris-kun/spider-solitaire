@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=3 uid="uid://bmqnrwvabx2ar"]
+[gd_scene load_steps=20 format=3 uid="uid://bmqnrwvabx2ar"]
 
 [ext_resource type="Script" path="res://scenes/game/gamescreen.gd" id="1_6jg1x"]
 [ext_resource type="Texture2D" uid="uid://brexfr5l20s1u" path="res://assets/img/background.png" id="2_mj0n8"]
@@ -14,6 +14,7 @@
 [ext_resource type="Script" path="res://scenes/game/tableau.gd" id="6_ny11j"]
 [ext_resource type="Script" path="res://general/texture_mix.gd" id="7_48ssy"]
 [ext_resource type="Texture2D" uid="uid://b6mbo6n5xf14i" path="res://assets/img/menu.png" id="7_f31bj"]
+[ext_resource type="PackedScene" uid="uid://kmht2ai4df18" path="res://scenes/game/win_screen_container.tscn" id="15_178jv"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_liaj1"]
 bg_color = Color(0, 0, 0, 0.392157)
@@ -38,12 +39,6 @@ resource_name = ""
 script = ExtResource("7_48ssy")
 background = ExtResource("6_i45ew")
 foreground = ExtResource("6_lu4wy")
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_af0nt"]
-bg_color = Color(0, 0, 0, 0.196078)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2mu73"]
-bg_color = Color(0, 0, 0, 0.627451)
 
 [node name="Control" type="Control"]
 texture_filter = 1
@@ -318,84 +313,15 @@ offset_top = 654.0
 offset_right = 1022.0
 offset_bottom = 854.0
 
-[node name="WinScreenContainer" type="Control" parent="."]
+[node name="WinScreenContainer" parent="." instance=ExtResource("15_178jv")]
 visible = false
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-metadata/_edit_lock_ = true
-
-[node name="Panel" type="Panel" parent="WinScreenContainer"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_af0nt")
-metadata/_edit_lock_ = true
-
-[node name="CenterContainer" type="CenterContainer" parent="WinScreenContainer"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-metadata/_edit_lock_ = true
-
-[node name="PanelContainer" type="PanelContainer" parent="WinScreenContainer/CenterContainer"]
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_2mu73")
-
-[node name="MarginContainer" type="MarginContainer" parent="WinScreenContainer/CenterContainer/PanelContainer"]
-layout_mode = 2
-theme_override_constants/margin_left = 30
-theme_override_constants/margin_top = 30
-theme_override_constants/margin_right = 30
-theme_override_constants/margin_bottom = 30
-
-[node name="VBoxContainer2" type="VBoxContainer" parent="WinScreenContainer/CenterContainer/PanelContainer/MarginContainer"]
-layout_mode = 2
-theme_override_constants/separation = 60
-
-[node name="VBoxContainer" type="VBoxContainer" parent="WinScreenContainer/CenterContainer/PanelContainer/MarginContainer/VBoxContainer2"]
-layout_mode = 2
-theme_override_constants/separation = 20
-
-[node name="Label" type="Label" parent="WinScreenContainer/CenterContainer/PanelContainer/MarginContainer/VBoxContainer2/VBoxContainer"]
-layout_mode = 2
-text = "WIN_TITLE"
-horizontal_alignment = 1
-
-[node name="Button" type="Button" parent="WinScreenContainer/CenterContainer/PanelContainer/MarginContainer/VBoxContainer2/VBoxContainer"]
-layout_mode = 2
-focus_mode = 0
-text = "WIN_REPLAY_GAME"
-
-[node name="Button2" type="Button" parent="WinScreenContainer/CenterContainer/PanelContainer/MarginContainer/VBoxContainer2/VBoxContainer"]
-layout_mode = 2
-focus_mode = 0
-text = "WIN_NEW_GAME"
-
-[node name="Button3" type="Button" parent="WinScreenContainer/CenterContainer/PanelContainer/MarginContainer/VBoxContainer2/VBoxContainer"]
-layout_mode = 2
-focus_mode = 0
-text = "WIN_MENU"
-
-[node name="Button4" type="Button" parent="WinScreenContainer/CenterContainer/PanelContainer/MarginContainer/VBoxContainer2"]
-layout_mode = 2
-focus_mode = 0
-text = "MENU_EXIT"
 
 [connection signal="pressed" from="Header/MenuMarginContainer/MenuButton" to="." method="_on_menu_pressed"]
 [connection signal="pressed" from="Header/HintButton" to="." method="_on_hint_pressed"]
 [connection signal="pressed" from="Header/UndoMarginContainer/UndoButton" to="." method="_on_undo_pressed"]
 [connection signal="pressed" from="Tableau/StockpileButton" to="Tableau" method="_on_stockpile_button_pressed"]
-[connection signal="pressed" from="WinScreenContainer/CenterContainer/PanelContainer/MarginContainer/VBoxContainer2/VBoxContainer/Button" to="." method="_on_replay_pressed"]
-[connection signal="pressed" from="WinScreenContainer/CenterContainer/PanelContainer/MarginContainer/VBoxContainer2/VBoxContainer/Button2" to="." method="_on_newgame_pressed"]
-[connection signal="pressed" from="WinScreenContainer/CenterContainer/PanelContainer/MarginContainer/VBoxContainer2/VBoxContainer/Button3" to="." method="_on_menu_pressed"]
-[connection signal="pressed" from="WinScreenContainer/CenterContainer/PanelContainer/MarginContainer/VBoxContainer2/Button4" to="." method="_on_quit_pressed"]
+[connection signal="menu_pressed" from="WinScreenContainer" to="." method="_on_menu_pressed"]
+[connection signal="newgame_pressed" from="WinScreenContainer" to="." method="_on_newgame_pressed"]
+[connection signal="quit_pressed" from="WinScreenContainer" to="." method="_on_quit_pressed"]
+[connection signal="replay_pressed" from="WinScreenContainer" to="." method="_on_replay_pressed"]
