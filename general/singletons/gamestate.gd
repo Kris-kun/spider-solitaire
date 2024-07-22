@@ -8,6 +8,11 @@ enum Mode {
 	FOUR_COLORS = 4,
 }
 
+enum SavefileAction {
+	SAVE,
+	DELETE,
+}
+
 const COLUMNS = 10
 
 ### values are the card types
@@ -44,9 +49,10 @@ var _rng = RandomNumberGenerator.new()
 var _next_hint_pile_src_index := 0
 var _next_hint_pile_dst_index := 0
 var _save_timer: SceneTreeTimer
+var _savefile_action: SavefileAction
 
 
-func reset(mode: Mode):
+func reset(mode: Mode) -> void:
 	if mode == Mode.SAME_COLOR_SAME_SEED:
 		mode = _mode
 	elif mode == Mode.SAME_COLOR_DIFFERENT_SEED:
@@ -70,20 +76,31 @@ func reset(mode: Mode):
 ## Save the current state
 ## This function will wait for a short time before saving
 ## to not repeatedly save if e.g. the undo button is being pressed too often
-func save():
-	const SAVE_WAIT_TIME := 0.2
+func save() -> void:
+	_timeout_save_delete(SavefileAction.SAVE)
+
+func delete() -> void:
+	_timeout_save_delete(SavefileAction.DELETE)
+
+func _timeout_save_delete(action: SavefileAction) -> void:
+	const WAIT_TIME := 0.2
+	_savefile_action = action
 	
 	if _save_timer != null:
-		_save_timer.time_left = SAVE_WAIT_TIME
+		_save_timer.time_left = WAIT_TIME
 		return
 	
-	_save_timer = get_tree().create_timer(SAVE_WAIT_TIME, true, false, true)
+	_save_timer = get_tree().create_timer(WAIT_TIME, true, false, true)
 	await _save_timer.timeout
 	_save_timer = null
-	_savestate.save()
+	
+	if _savefile_action == SavefileAction.SAVE:
+		_savestate.save()
+	else:
+		_savestate.delete()
 
 
-func load():
+func load() -> void:
 	var savestate := Savestate.load()
 	if savestate == null:
 		return
@@ -368,7 +385,7 @@ func _undo_history(history: History):
 
 func _save_or_delete() -> void:
 	if completed_stacks.size() == 8:
-		Savestate.delete()
+		delete()
 	else:
 		save()
 
