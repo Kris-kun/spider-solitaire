@@ -97,7 +97,7 @@ func _timeout_save_delete(action: SavefileAction) -> void:
 	if _savefile_action == SavefileAction.SAVE:
 		_savestate.save()
 	else:
-		_savestate.delete()
+		Savestate.delete()
 
 
 func load() -> void:

@@ -9,6 +9,10 @@ static func change_scene_to_gamescreen(tree: SceneTree) -> void:
 	change_scene(tree, "res://scenes/game/gamescreen.tscn")
 
 
+static func change_scene_to_settings(tree: SceneTree) -> void:
+	change_scene(tree, "res://scenes/settings/settings.tscn")
+
+
 static func change_scene(tree: SceneTree, path: String) -> void:
 	# on android, i got ERROR: can_process: Condition "!is_inside_tree()" is true. Returned: false
 	# people said this would crash when exporting with RELEASE instead of DEBUG where it would just print the error

@@ -344,8 +344,8 @@ func _on_stockpile_button_pressed() -> void:
 
 func _animate_handout_card(cards: Array) -> Tween:
 	var tween := create_tween().set_parallel()
-	const duration = 0.15
-	const delay = 0.05
+	var duration := 0.15 * Settings.animation_time_multiplier
+	var delay := 0.05 * Settings.animation_time_multiplier
 	
 	for pile_idx in cards.size():
 		var card: UiCard = cards[pile_idx]
@@ -366,7 +366,7 @@ func _animate_handout_card(cards: Array) -> Tween:
 
 func _animate_cards_move_to_0(cards: Array) -> Tween:
 	var tween := create_tween().set_parallel()
-	var duration = 0.05
+	var duration = 0.05 * Settings.animation_time_multiplier
 	
 	for card in cards:
 		tween.tween_property(card, "position", Vector2(), duration)
@@ -375,7 +375,7 @@ func _animate_cards_move_to_0(cards: Array) -> Tween:
 
 func _animate_stack_complete(cards: Array) -> Tween:
 	var tween := create_tween().set_parallel()
-	var duration = 0.25
+	var duration = 0.25 * Settings.animation_time_multiplier
 	
 	for card in cards:
 		tween.set_parallel()

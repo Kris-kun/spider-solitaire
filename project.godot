@@ -17,6 +17,7 @@ config/icon="res://icon.png"
 
 [autoload]
 
+Settings="*res://general/singletons/settings.gd"
 Gamestate="*res://general/singletons/gamestate.gd"
 
 [display]

@@ -6,7 +6,7 @@ var _pressed_colors: int
 func _ready() -> void:
 	DisplayServer.window_set_min_size(Vector2i(800, 400))
 	
-	$CenterContainer/VBoxContainer/ContinueButton.visible = Savestate.exists()
+	$CenterContainer/VBoxContainer/VBoxContainer/ContinueButton.visible = Savestate.exists()
 	
 	# add color icons to the buttons
 	# we need a space around the icons because otherwise they will be displayed too high
@@ -66,3 +66,7 @@ func _on_confirmation_dialog_canceled() -> void:
 func _on_confirmation_dialog_confirmed() -> void:
 	$PopupPanel.hide()
 	_start_game(_pressed_colors)
+
+
+func _on_settings_pressed() -> void:
+	SceneUtils.change_scene_to_settings(get_tree())
