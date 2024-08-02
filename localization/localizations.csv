@@ -22,7 +22,8 @@ WIN_TITLE,Game won,Spiel gewonnen
 WIN_REPLAY_GAME,Replay game (same deck),Erneut spielen (gleiches Deck)
 WIN_NEW_GAME,New game,Neues Spiel
 WIN_MENU,Main menu,Hauptmenü
-NOTIFICATION_HINT,No more hints avaiable,Keine Hinweise mehr verfügbar
+NOTIFICATION_HINT,No more hints available,Keine Hinweise mehr verfügbar
+NOTIFICATION_HANDOUT,There must be a card in every pile,Jeder Haufen muss mindestens eine Karte haben
 BUTTON_MENU_TOOLTIP,Back to menu,Zurück zum Menü
 BUTTON_HINT_TOOLTIP,Show hint,Hinweis anzeigen
 BUTTON_UNDO_TOOLTIP,Undo move,Zug rückgängig machen

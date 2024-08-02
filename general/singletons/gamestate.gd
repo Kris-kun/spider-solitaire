@@ -205,7 +205,7 @@ func handout() -> HandoutResult:
 	
 	var any_pile_empty = tableau_piles.any(func(pile): return pile.cards.is_empty())
 	if any_pile_empty:
-		return HandoutResult.new([])
+		return HandoutResult.error_any_pile_empty()
 	
 	var cards: Array[Card] = []
 	var result := HandoutResult.new(cards)

@@ -72,6 +72,17 @@ func create_frontend_cards():
 
 func handout_cards():
 	var result := Gamestate.handout()
+	
+	if result.has_error_any_pile_empty():
+		NotificationHandler.add(
+			NotificationHandler.NotificationType.HANDOUT,
+			"NOTIFICATION_HANDOUT",
+			$StockpileContainer.get_child(-1),
+			TransformUtils.Anchor.CENTER_LEFT
+		)
+		return
+	
+	
 	var cards := result.handout_cards
 	var moving_cards = []
 	
