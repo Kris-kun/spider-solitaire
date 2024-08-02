@@ -103,9 +103,13 @@ layout_mode = 2
 layout_mode = 2
 text = "SETTINGS_BUTTON_RESET_DEFAULTS"
 
-[node name="BackButton" type="Button" parent="VBoxContainer/ButtonbarCenterContainer/HBoxContainer"]
+[node name="CancelButton" type="Button" parent="VBoxContainer/ButtonbarCenterContainer/HBoxContainer"]
 layout_mode = 2
-text = "SETTINGS_BUTTON_BACK"
+text = "SETTINGS_BUTTON_CANCEL"
+
+[node name="ApplyButton" type="Button" parent="VBoxContainer/ButtonbarCenterContainer/HBoxContainer"]
+layout_mode = 2
+text = "SETTINGS_BUTTON_APPLY"
 
 [node name="Spacing2" type="Control" parent="VBoxContainer"]
 custom_minimum_size = Vector2(0, 50)
@@ -113,4 +117,5 @@ layout_mode = 2
 
 [connection signal="value_changed" from="VBoxContainer/CenterContainer/VBoxContainer/HBoxContainer/AnimationSpeedSlider" to="." method="_on_animation_speed_value_changed"]
 [connection signal="pressed" from="VBoxContainer/ButtonbarCenterContainer/HBoxContainer/DefaultButton" to="." method="_on_default_button_pressed"]
-[connection signal="pressed" from="VBoxContainer/ButtonbarCenterContainer/HBoxContainer/BackButton" to="." method="_on_back_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/ButtonbarCenterContainer/HBoxContainer/CancelButton" to="." method="_on_cancel_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/ButtonbarCenterContainer/HBoxContainer/ApplyButton" to="." method="_on_apply_button_pressed"]

@@ -11,6 +11,8 @@ OPTION_ANIM_SPEED,Animation speed,Animationsgeschwindigkeit
 OPTION_SLOW,Slow,Langsam
 OPTION_FAST,Fast,Schnell
 SETTINGS_BUTTON_BACK,Back to menu,Zurück zum Menü
+SETTINGS_BUTTON_CANCEL,Cancel,Abbrechen
+SETTINGS_BUTTON_APPLY,Apply,Anwenden
 SETTINGS_BUTTON_RESET_DEFAULTS,Reset to default,Auf Standard zurücksetzen
 
 WIN_TITLE,Game won,Spiel gewonnen
