@@ -190,7 +190,7 @@ func _check_complete_stack(pile: TableauPile) -> bool:
 	var color = pile.cards[-1].get_color()
 	for i in pile.cards.size():
 		var card := pile.cards[-1 - i]
-		if card.get_value() != value or card.get_color() != color:
+		if not card.revealed or card.get_value() != value or card.get_color() != color:
 			return false
 		elif value == 13:
 			return true
