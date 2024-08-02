@@ -1,10 +1,21 @@
-[gd_scene load_steps=5 format=3 uid="uid://dtpwfvk0pval8"]
+[gd_scene load_steps=10 format=3 uid="uid://dtpwfvk0pval8"]
 
 [ext_resource type="Script" path="res://scenes/main_menu/menu.gd" id="1_00gu7"]
 [ext_resource type="Texture2D" uid="uid://brexfr5l20s1u" path="res://assets/img/background.png" id="2_l5x05"]
+[ext_resource type="Texture2D" uid="uid://csm3yxkjcg04w" path="res://assets/img/language.png" id="3_4y5mf"]
+[ext_resource type="Texture2D" uid="uid://xj2wb1lixn1t" path="res://assets/img/game-button-focus.png" id="4_r4bms"]
+[ext_resource type="Script" path="res://general/texture_mix.gd" id="5_0ekt2"]
+[ext_resource type="PackedScene" uid="uid://cs6bcb2jt8ic7" path="res://scenes/language/language.tscn" id="6_1j1k5"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qnchj"]
 bg_color = Color(0, 0, 0, 0.0784314)
+
+[sub_resource type="Texture2D" id="Texture2D_pt7s2"]
+resource_local_to_scene = false
+resource_name = ""
+script = ExtResource("5_0ekt2")
+background = ExtResource("3_4y5mf")
+foreground = ExtResource("4_r4bms")
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_em7fg"]
 bg_color = Color(0, 0, 0, 0.196078)
@@ -89,6 +100,22 @@ layout_mode = 2
 focus_mode = 0
 text = "MENU_EXIT"
 
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -40.0
+offset_bottom = 40.0
+grow_horizontal = 0
+theme_override_constants/margin_top = 50
+theme_override_constants/margin_right = 50
+
+[node name="LanguageButton" type="TextureButton" parent="MarginContainer"]
+layout_mode = 2
+texture_normal = ExtResource("3_4y5mf")
+texture_hover = SubResource("Texture2D_pt7s2")
+
 [node name="PopupPanel" type="Panel" parent="."]
 visible = false
 layout_mode = 1
@@ -103,7 +130,7 @@ metadata/_edit_lock_ = true
 [node name="ConfirmationDialog" type="ConfirmationDialog" parent="."]
 mode = 2
 initial_position = 1
-size = Vector2i(752, 155)
+size = Vector2i(816, 155)
 transient = false
 unresizable = true
 borderless = true
@@ -112,11 +139,26 @@ dialog_text = "MENU_CONFIRMATION_CONTENT"
 dialog_autowrap = true
 cancel_button_text = "BUTTON_CANCEL"
 
+[node name="AcceptDialog" type="AcceptDialog" parent="."]
+initial_position = 1
+size = Vector2i(640, 600)
+transient = false
+unresizable = true
+borderless = true
+
+[node name="Language" parent="AcceptDialog" instance=ExtResource("6_1j1k5")]
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -102.0
+
 [connection signal="pressed" from="CenterContainer/VBoxContainer/VBoxContainer/ContinueButton" to="." method="_on_continue_pressed"]
 [connection signal="pressed" from="CenterContainer/VBoxContainer/VBoxContainer/PlayButton1" to="." method="_on_play_pressed" binds= [1]]
 [connection signal="pressed" from="CenterContainer/VBoxContainer/VBoxContainer/PlayButton2" to="." method="_on_play_pressed" binds= [2]]
 [connection signal="pressed" from="CenterContainer/VBoxContainer/VBoxContainer/PlayButton4" to="." method="_on_play_pressed" binds= [4]]
 [connection signal="pressed" from="CenterContainer/VBoxContainer/VBoxContainer/SettingsButton" to="." method="_on_settings_pressed"]
 [connection signal="pressed" from="CenterContainer/VBoxContainer/CloseButton" to="." method="_on_quit_pressed"]
+[connection signal="pressed" from="MarginContainer/LanguageButton" to="." method="_on_language_button_pressed"]
 [connection signal="canceled" from="ConfirmationDialog" to="." method="_on_confirmation_dialog_canceled"]
 [connection signal="confirmed" from="ConfirmationDialog" to="." method="_on_confirmation_dialog_confirmed"]
+[connection signal="confirmed" from="AcceptDialog" to="." method="_on_accept_dialog_confirmed"]

@@ -9,6 +9,7 @@ const SAVEFILE_PATH := SAVEFILE_DIRECTORY + "/settings.tres"
 ## Always use Settings.global or only save it temporarily inside a function for ease of use
 static var global: Settings
 
+@export var locale := TranslationServer.get_locale().split("_")[0]
 @export var animation_time_multiplier := 1.0
 
 
@@ -17,6 +18,8 @@ static func _static_init() -> void:
 		global = Settings.load()
 	if global == null:
 		global = Settings.new()
+	
+	TranslationServer.set_locale(global.locale)
 
 
 static func save() -> void:

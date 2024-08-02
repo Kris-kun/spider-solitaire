@@ -18,18 +18,6 @@ func _ready() -> void:
 	
 	$ConfirmationDialog.get_ok_button().focus_mode = FOCUS_NONE
 	$ConfirmationDialog.get_cancel_button().focus_mode = FOCUS_NONE
-	
-	prints("Settings:", Settings.global.animation_time_multiplier)
-	#Settings.global.animation_time_multiplier = 1.5
-	#var test: Settings = Settings.global.duplicate(true)
-	#prints(Settings.global.animation_time_multiplier, "-", test.animation_time_multiplier) # 1.5 - 1.5
-	#Settings.global.animation_time_multiplier = 2.0
-	#prints(Settings.global.animation_time_multiplier, "-", test.animation_time_multiplier) # 2 - 1.5
-	#test.animation_time_multiplier = 0.5
-	#prints(Settings.global.animation_time_multiplier, "-", test.animation_time_multiplier) # 2 - 0.5
-	#
-	#Settings.global = test
-	#prints(Settings.global.animation_time_multiplier, "-", test.animation_time_multiplier) # 0.5 - 0.5
 
 
 func _on_play_pressed(colors: int) -> void:
@@ -82,3 +70,13 @@ func _on_confirmation_dialog_confirmed() -> void:
 
 func _on_settings_pressed() -> void:
 	SceneUtils.change_scene_to_settings(get_tree())
+
+
+func _on_language_button_pressed() -> void:
+	$PopupPanel.show()
+	$AcceptDialog.show()
+	return
+
+
+func _on_accept_dialog_confirmed() -> void:
+	$PopupPanel.hide()
