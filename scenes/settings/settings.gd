@@ -1,9 +1,10 @@
 extends Control
 
+signal close
 
 var tmp_settings := Settings.global.duplicate(true)
 
-@onready var animation_speed_slider := $VBoxContainer/CenterContainer/VBoxContainer/HBoxContainer/AnimationSpeedSlider
+@onready var animation_speed_slider := $MenuDialog/MarginContainer/MarginContainer2/ContentContainer/VBoxContainer/CenterContainer/VBoxContainer/HBoxContainer/AnimationSpeedSlider
 
 func _ready() -> void:
 	_init_from_settings()
@@ -20,7 +21,8 @@ func _on_animation_speed_value_changed(value: float) -> void:
 func _on_apply_button_pressed() -> void:
 	Settings.global = tmp_settings
 	Settings.save()
-	SceneUtils.change_scene_to_menu(get_tree())
+	#SceneUtils.change_scene_to_menu(get_tree())
+	close.emit()
 
 
 func _on_default_button_pressed() -> void:
@@ -29,4 +31,5 @@ func _on_default_button_pressed() -> void:
 
 
 func _on_cancel_button_pressed() -> void:
-	SceneUtils.change_scene_to_menu(get_tree())
+	#SceneUtils.change_scene_to_menu(get_tree())
+	close.emit()

@@ -1,6 +1,29 @@
-[gd_scene load_steps=4 format=3 uid="uid://kmht2ai4df18"]
+[gd_scene load_steps=4 format=3 uid="uid://bemlh5bqxgpof"]
 
-[ext_resource type="Script" path="res://scenes/game/win_screen_container.gd" id="1_ojckc"]
+[sub_resource type="GDScript" id="GDScript_x81n6"]
+script/source = "extends Control
+
+signal menu_pressed
+signal replay_pressed
+signal newgame_pressed
+signal quit_pressed
+
+
+func _on_menu_pressed() -> void:
+	menu_pressed.emit()
+
+
+func _on_replay_pressed() -> void:
+	replay_pressed.emit()
+
+
+func _on_newgame_pressed() -> void:
+	newgame_pressed.emit()
+
+
+func _on_quit_pressed() -> void:
+	quit_pressed.emit()
+"
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_af0nt"]
 bg_color = Color(0, 0, 0, 0.196078)
@@ -15,7 +38,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_ojckc")
+script = SubResource("GDScript_x81n6")
 metadata/_edit_lock_ = true
 
 [node name="Panel" type="Panel" parent="."]

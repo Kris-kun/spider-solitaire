@@ -1,0 +1,54 @@
+[gd_scene load_steps=3 format=3 uid="uid://dt0lo4jnd0c76"]
+
+[ext_resource type="PackedScene" uid="uid://co6uf4jhk5jkp" path="res://scenes/popups/menu_dialog/menu_dialog.tscn" id="1_80165"]
+[ext_resource type="Script" path="res://scenes/popups/win_dialog/win_dialog.gd" id="1_ns2x3"]
+
+[node name="WinDialog" type="CenterContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_ns2x3")
+
+[node name="MenuDialog" parent="." instance=ExtResource("1_80165")]
+custom_minimum_size = Vector2(600, 750)
+layout_mode = 2
+
+[node name="MenuDialog_MarginContainer2_ContentContainer#VBoxContainer2" type="VBoxContainer" parent="MenuDialog/MarginContainer/MarginContainer2/ContentContainer" index="0"]
+layout_mode = 2
+theme_override_constants/separation = 60
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MenuDialog/MarginContainer/MarginContainer2/ContentContainer/MenuDialog_MarginContainer2_ContentContainer#VBoxContainer2"]
+layout_mode = 2
+
+[node name="Button" type="Button" parent="MenuDialog/MarginContainer/MarginContainer2/ContentContainer/MenuDialog_MarginContainer2_ContentContainer#VBoxContainer2/VBoxContainer"]
+layout_mode = 2
+focus_mode = 0
+text = "WIN_REPLAY_GAME"
+
+[node name="Button2" type="Button" parent="MenuDialog/MarginContainer/MarginContainer2/ContentContainer/MenuDialog_MarginContainer2_ContentContainer#VBoxContainer2/VBoxContainer"]
+layout_mode = 2
+focus_mode = 0
+text = "WIN_NEW_GAME"
+
+[node name="Button3" type="Button" parent="MenuDialog/MarginContainer/MarginContainer2/ContentContainer/MenuDialog_MarginContainer2_ContentContainer#VBoxContainer2/VBoxContainer"]
+layout_mode = 2
+focus_mode = 0
+text = "WIN_MENU"
+
+[node name="Button4" type="Button" parent="MenuDialog/MarginContainer/MarginContainer2/ContentContainer/MenuDialog_MarginContainer2_ContentContainer#VBoxContainer2"]
+layout_mode = 2
+focus_mode = 0
+text = "MENU_EXIT"
+
+[node name="Label" type="Label" parent="MenuDialog/TitleContainer" index="0"]
+layout_mode = 2
+text = "WIN_TITLE"
+
+[connection signal="pressed" from="MenuDialog/MarginContainer/MarginContainer2/ContentContainer/MenuDialog_MarginContainer2_ContentContainer#VBoxContainer2/VBoxContainer/Button" to="." method="_on_replay_pressed"]
+[connection signal="pressed" from="MenuDialog/MarginContainer/MarginContainer2/ContentContainer/MenuDialog_MarginContainer2_ContentContainer#VBoxContainer2/VBoxContainer/Button2" to="." method="_on_newgame_pressed"]
+[connection signal="pressed" from="MenuDialog/MarginContainer/MarginContainer2/ContentContainer/MenuDialog_MarginContainer2_ContentContainer#VBoxContainer2/VBoxContainer/Button3" to="." method="_on_menu_pressed"]
+[connection signal="pressed" from="MenuDialog/MarginContainer/MarginContainer2/ContentContainer/MenuDialog_MarginContainer2_ContentContainer#VBoxContainer2/Button4" to="." method="_on_quit_pressed"]
+
+[editable path="MenuDialog"]

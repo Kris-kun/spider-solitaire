@@ -1,13 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://csj3b5mdbkfi3"]
+[gd_scene load_steps=3 format=3 uid="uid://csj3b5mdbkfi3"]
 
 [ext_resource type="Script" path="res://scenes/settings/settings.gd" id="1_m56yy"]
-[ext_resource type="Texture2D" uid="uid://brexfr5l20s1u" path="res://assets/img/background.png" id="2_ada70"]
+[ext_resource type="PackedScene" uid="uid://co6uf4jhk5jkp" path="res://scenes/popups/menu_dialog/menu_dialog.tscn" id="2_alemw"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ptrfs"]
-bg_color = Color(0, 0, 0, 0.0784314)
-
-[node name="Settings" type="Control"]
-layout_mode = 3
+[node name="Settings" type="CenterContainer"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -15,70 +11,34 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_m56yy")
 
-[node name="BackgroundTexture" type="TextureRect" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-texture = ExtResource("2_ada70")
-stretch_mode = 1
-metadata/_edit_lock_ = true
-
-[node name="Panel" type="Panel" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_ptrfs")
-metadata/_edit_lock_ = true
-
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="Spacing" type="Control" parent="VBoxContainer"]
-custom_minimum_size = Vector2(0, 50)
+[node name="MenuDialog" parent="." instance=ExtResource("2_alemw")]
 layout_mode = 2
 
-[node name="TitleCenterContainer" type="CenterContainer" parent="VBoxContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MenuDialog/MarginContainer/MarginContainer2/ContentContainer" index="0"]
 layout_mode = 2
 
-[node name="Title" type="Label" parent="VBoxContainer/TitleCenterContainer"]
-layout_mode = 2
-size_flags_vertical = 5
-theme_override_font_sizes/font_size = 56
-text = "MENU_SETTINGS"
-
-[node name="CenterContainer" type="CenterContainer" parent="VBoxContainer"]
+[node name="CenterContainer" type="CenterContainer" parent="MenuDialog/MarginContainer/MarginContainer2/ContentContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/CenterContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MenuDialog/MarginContainer/MarginContainer2/ContentContainer/VBoxContainer/CenterContainer"]
 layout_mode = 2
 
-[node name="AnimationSpeed" type="Label" parent="VBoxContainer/CenterContainer/VBoxContainer"]
+[node name="AnimationSpeed" type="Label" parent="MenuDialog/MarginContainer/MarginContainer2/ContentContainer/VBoxContainer/CenterContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 5
 text = "OPTION_ANIM_SPEED"
 
-[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/CenterContainer/VBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="MenuDialog/MarginContainer/MarginContainer2/ContentContainer/VBoxContainer/CenterContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="Slow" type="Label" parent="VBoxContainer/CenterContainer/VBoxContainer/HBoxContainer"]
+[node name="Slow" type="Label" parent="MenuDialog/MarginContainer/MarginContainer2/ContentContainer/VBoxContainer/CenterContainer/VBoxContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 5
 theme_type_variation = &"SubtleLabel"
 text = "OPTION_SLOW"
 
-[node name="AnimationSpeedSlider" type="HSlider" parent="VBoxContainer/CenterContainer/VBoxContainer/HBoxContainer"]
+[node name="AnimationSpeedSlider" type="HSlider" parent="MenuDialog/MarginContainer/MarginContainer2/ContentContainer/VBoxContainer/CenterContainer/VBoxContainer/HBoxContainer"]
 custom_minimum_size = Vector2(400, 0)
 layout_mode = 2
 size_flags_vertical = 5
@@ -87,35 +47,41 @@ max_value = 2.0
 step = 0.0
 value = 2.0
 
-[node name="Fast" type="Label" parent="VBoxContainer/CenterContainer/VBoxContainer/HBoxContainer"]
+[node name="Fast" type="Label" parent="MenuDialog/MarginContainer/MarginContainer2/ContentContainer/VBoxContainer/CenterContainer/VBoxContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 5
 theme_type_variation = &"SubtleLabel"
 text = "OPTION_FAST"
 
-[node name="ButtonbarCenterContainer" type="CenterContainer" parent="VBoxContainer"]
-layout_mode = 2
-
-[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/ButtonbarCenterContainer"]
-layout_mode = 2
-
-[node name="DefaultButton" type="Button" parent="VBoxContainer/ButtonbarCenterContainer/HBoxContainer"]
-layout_mode = 2
-text = "SETTINGS_BUTTON_RESET_DEFAULTS"
-
-[node name="CancelButton" type="Button" parent="VBoxContainer/ButtonbarCenterContainer/HBoxContainer"]
-layout_mode = 2
-text = "SETTINGS_BUTTON_CANCEL"
-
-[node name="ApplyButton" type="Button" parent="VBoxContainer/ButtonbarCenterContainer/HBoxContainer"]
-layout_mode = 2
-text = "SETTINGS_BUTTON_APPLY"
-
-[node name="Spacing2" type="Control" parent="VBoxContainer"]
+[node name="Spacing2" type="Control" parent="MenuDialog/MarginContainer/MarginContainer2/ContentContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
 
-[connection signal="value_changed" from="VBoxContainer/CenterContainer/VBoxContainer/HBoxContainer/AnimationSpeedSlider" to="." method="_on_animation_speed_value_changed"]
-[connection signal="pressed" from="VBoxContainer/ButtonbarCenterContainer/HBoxContainer/DefaultButton" to="." method="_on_default_button_pressed"]
-[connection signal="pressed" from="VBoxContainer/ButtonbarCenterContainer/HBoxContainer/CancelButton" to="." method="_on_cancel_button_pressed"]
-[connection signal="pressed" from="VBoxContainer/ButtonbarCenterContainer/HBoxContainer/ApplyButton" to="." method="_on_apply_button_pressed"]
+[node name="ButtonbarCenterContainer" type="CenterContainer" parent="MenuDialog/MarginContainer/MarginContainer2/ContentContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MenuDialog/MarginContainer/MarginContainer2/ContentContainer/VBoxContainer/ButtonbarCenterContainer"]
+layout_mode = 2
+
+[node name="DefaultButton" type="Button" parent="MenuDialog/MarginContainer/MarginContainer2/ContentContainer/VBoxContainer/ButtonbarCenterContainer/HBoxContainer"]
+layout_mode = 2
+text = "SETTINGS_BUTTON_RESET_DEFAULTS"
+
+[node name="CancelButton" type="Button" parent="MenuDialog/MarginContainer/MarginContainer2/ContentContainer/VBoxContainer/ButtonbarCenterContainer/HBoxContainer"]
+layout_mode = 2
+text = "SETTINGS_BUTTON_CANCEL"
+
+[node name="ApplyButton" type="Button" parent="MenuDialog/MarginContainer/MarginContainer2/ContentContainer/VBoxContainer/ButtonbarCenterContainer/HBoxContainer"]
+layout_mode = 2
+text = "SETTINGS_BUTTON_APPLY"
+
+[node name="Label" type="Label" parent="MenuDialog/TitleContainer" index="0"]
+layout_mode = 2
+text = "MENU_SETTINGS"
+
+[connection signal="value_changed" from="MenuDialog/MarginContainer/MarginContainer2/ContentContainer/VBoxContainer/CenterContainer/VBoxContainer/HBoxContainer/AnimationSpeedSlider" to="." method="_on_animation_speed_value_changed"]
+[connection signal="pressed" from="MenuDialog/MarginContainer/MarginContainer2/ContentContainer/VBoxContainer/ButtonbarCenterContainer/HBoxContainer/DefaultButton" to="." method="_on_default_button_pressed"]
+[connection signal="pressed" from="MenuDialog/MarginContainer/MarginContainer2/ContentContainer/VBoxContainer/ButtonbarCenterContainer/HBoxContainer/CancelButton" to="." method="_on_cancel_button_pressed"]
+[connection signal="pressed" from="MenuDialog/MarginContainer/MarginContainer2/ContentContainer/VBoxContainer/ButtonbarCenterContainer/HBoxContainer/ApplyButton" to="." method="_on_apply_button_pressed"]
+
+[editable path="MenuDialog"]

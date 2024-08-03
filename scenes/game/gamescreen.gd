@@ -1,11 +1,14 @@
 extends Control
 
 
-@onready var win_screen_container := $WinScreenContainer
+#@onready var win_screen_container := $WinScreenContainer
+@onready var dialog_background := $DialogBackgroundPanel
+@onready var win_screen_container := $WinDialog
 @onready var tableau := $Tableau
 
 
 func _ready():
+	dialog_background.visible = false
 	win_screen_container.visible = false
 	tableau.game_finished.connect(_on_game_finished)
 	NotificationHandler.notification_added.connect(_on_notification_added)
@@ -34,6 +37,7 @@ func _unhandled_key_input(event: InputEvent) -> void:
 
 
 func _on_game_finished() -> void:
+	dialog_background.visible = true
 	win_screen_container.visible = true
 
 
@@ -47,12 +51,14 @@ func _on_menu_pressed() -> void:
 
 func _on_replay_pressed() -> void:
 	Gamestate.reset(Gamestate.Mode.SAME_COLOR_SAME_SEED)
+	dialog_background.visible = false
 	win_screen_container.visible = false
 	tableau.reset_cards()
 
 
 func _on_newgame_pressed() -> void:
 	Gamestate.reset(Gamestate.Mode.SAME_COLOR_DIFFERENT_SEED)
+	dialog_background.visible = false
 	win_screen_container.visible = false
 	tableau.reset_cards()
 

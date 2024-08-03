@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://dtpwfvk0pval8"]
+[gd_scene load_steps=11 format=3 uid="uid://dtpwfvk0pval8"]
 
 [ext_resource type="Script" path="res://scenes/main_menu/menu.gd" id="1_00gu7"]
 [ext_resource type="Texture2D" uid="uid://brexfr5l20s1u" path="res://assets/img/background.png" id="2_l5x05"]
@@ -6,6 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://xj2wb1lixn1t" path="res://assets/img/game-button-focus.png" id="4_r4bms"]
 [ext_resource type="Script" path="res://general/texture_mix.gd" id="5_0ekt2"]
 [ext_resource type="PackedScene" uid="uid://cs6bcb2jt8ic7" path="res://scenes/language/language.tscn" id="6_1j1k5"]
+[ext_resource type="PackedScene" uid="uid://csj3b5mdbkfi3" path="res://scenes/settings/settings.tscn" id="7_nt0jj"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qnchj"]
 bg_color = Color(0, 0, 0, 0.0784314)
@@ -152,6 +153,19 @@ offset_top = 8.0
 offset_right = -8.0
 offset_bottom = -102.0
 
+[node name="Settings" parent="." instance=ExtResource("7_nt0jj")]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -300.0
+offset_top = -300.0
+offset_right = 300.0
+offset_bottom = 300.0
+
 [connection signal="pressed" from="CenterContainer/VBoxContainer/VBoxContainer/ContinueButton" to="." method="_on_continue_pressed"]
 [connection signal="pressed" from="CenterContainer/VBoxContainer/VBoxContainer/PlayButton1" to="." method="_on_play_pressed" binds= [1]]
 [connection signal="pressed" from="CenterContainer/VBoxContainer/VBoxContainer/PlayButton2" to="." method="_on_play_pressed" binds= [2]]
@@ -162,3 +176,4 @@ offset_bottom = -102.0
 [connection signal="canceled" from="ConfirmationDialog" to="." method="_on_confirmation_dialog_canceled"]
 [connection signal="confirmed" from="ConfirmationDialog" to="." method="_on_confirmation_dialog_confirmed"]
 [connection signal="confirmed" from="AcceptDialog" to="." method="_on_accept_dialog_confirmed"]
+[connection signal="close" from="Settings" to="." method="_on_settings_close"]

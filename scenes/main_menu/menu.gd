@@ -69,14 +69,19 @@ func _on_confirmation_dialog_confirmed() -> void:
 
 
 func _on_settings_pressed() -> void:
-	SceneUtils.change_scene_to_settings(get_tree())
+	$PopupPanel.show()
+	$Settings.show()
 
 
 func _on_language_button_pressed() -> void:
 	$PopupPanel.show()
 	$AcceptDialog.show()
-	return
 
 
 func _on_accept_dialog_confirmed() -> void:
 	$PopupPanel.hide()
+
+
+func _on_settings_close() -> void:
+	$PopupPanel.hide()
+	$Settings.hide()
