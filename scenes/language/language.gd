@@ -1,7 +1,8 @@
 extends Control
 
+signal close
 
-@onready var languages_list := $VBoxContainer/ScrollContainer/ItemList
+@onready var languages_list := $MenuDialog/MarginContainer/MarginContainer2/ContentContainer/VBoxContainer/ItemList
 
 
 func _ready() -> void:
@@ -22,3 +23,7 @@ func _on_item_list_item_selected(index: int) -> void:
 	TranslationServer.set_locale(locale)
 	Settings.global.locale = locale
 	Settings.save()
+
+
+func _on_ok_button_pressed() -> void:
+	close.emit()

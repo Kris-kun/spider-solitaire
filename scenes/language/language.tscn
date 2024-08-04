@@ -1,9 +1,9 @@
-[gd_scene load_steps=2 format=3 uid="uid://cs6bcb2jt8ic7"]
+[gd_scene load_steps=3 format=3 uid="uid://cs6bcb2jt8ic7"]
 
 [ext_resource type="Script" path="res://scenes/language/language.gd" id="1_hpl4v"]
+[ext_resource type="PackedScene" uid="uid://co6uf4jhk5jkp" path="res://scenes/popups/menu_dialog/menu_dialog.tscn" id="2_xf6bg"]
 
-[node name="Language" type="Control"]
-layout_mode = 3
+[node name="Language" type="CenterContainer"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -11,32 +11,35 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_hpl4v")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
-layout_mode = 1
-anchors_preset = 13
-anchor_left = 0.5
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -154.0
-offset_right = 154.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="Label" type="Label" parent="VBoxContainer"]
+[node name="MenuDialog" parent="." instance=ExtResource("2_xf6bg")]
 layout_mode = 2
-text = "LANGUAGE_TITLE"
-horizontal_alignment = 1
 
-[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer"]
+[node name="CloseButton" parent="MenuDialog/MarginContainer/MarginContainer" index="0"]
+visible = false
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MenuDialog/MarginContainer/MarginContainer2/ContentContainer" index="0"]
 layout_mode = 2
-size_flags_vertical = 3
-horizontal_scroll_mode = 0
+theme_override_constants/separation = 60
 
-[node name="ItemList" type="ItemList" parent="VBoxContainer/ScrollContainer"]
+[node name="ItemList" type="ItemList" parent="MenuDialog/MarginContainer/MarginContainer2/ContentContainer/VBoxContainer"]
 custom_minimum_size = Vector2(300, 100)
 layout_mode = 2
+focus_mode = 0
 theme_override_constants/v_separation = 20
 theme_override_constants/icon_margin = 20
 auto_height = true
 
-[connection signal="item_selected" from="VBoxContainer/ScrollContainer/ItemList" to="." method="_on_item_list_item_selected"]
+[node name="OkButton" type="Button" parent="MenuDialog/MarginContainer/MarginContainer2/ContentContainer/VBoxContainer"]
+layout_mode = 2
+focus_mode = 0
+text = "BUTTON_OK"
+
+[node name="Label" type="Label" parent="MenuDialog/TitleContainer" index="0"]
+layout_mode = 2
+text = "LANGUAGE_TITLE"
+horizontal_alignment = 1
+
+[connection signal="item_selected" from="MenuDialog/MarginContainer/MarginContainer2/ContentContainer/VBoxContainer/ItemList" to="." method="_on_item_list_item_selected"]
+[connection signal="pressed" from="MenuDialog/MarginContainer/MarginContainer2/ContentContainer/VBoxContainer/OkButton" to="." method="_on_ok_button_pressed"]
+
+[editable path="MenuDialog"]

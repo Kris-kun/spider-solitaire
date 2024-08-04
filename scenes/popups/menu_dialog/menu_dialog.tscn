@@ -19,6 +19,11 @@ shadow_offset = Vector2(10, 10)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_i8b6o"]
 bg_color = Color(0.827451, 0.184314, 0.137255, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.596078, 0.345098, 0, 1)
 corner_radius_top_left = 50
 corner_radius_top_right = 50
 corner_radius_bottom_right = 50
@@ -26,6 +31,11 @@ corner_radius_bottom_left = 50
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nyiei"]
 bg_color = Color(0.964531, 0.363959, 0.297891, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.596078, 0.345098, 0, 1)
 corner_radius_top_left = 50
 corner_radius_top_right = 50
 corner_radius_bottom_right = 50
@@ -82,7 +92,7 @@ theme_override_constants/margin_right = 30
 
 [node name="CloseButton" type="Button" parent="MarginContainer/MarginContainer"]
 visible = false
-custom_minimum_size = Vector2(64, 64)
+custom_minimum_size = Vector2(68, 68)
 layout_mode = 2
 size_flags_horizontal = 8
 size_flags_vertical = 0

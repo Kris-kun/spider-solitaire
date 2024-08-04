@@ -140,18 +140,13 @@ dialog_text = "MENU_CONFIRMATION_CONTENT"
 dialog_autowrap = true
 cancel_button_text = "BUTTON_CANCEL"
 
-[node name="AcceptDialog" type="AcceptDialog" parent="."]
-initial_position = 1
-size = Vector2i(640, 600)
-transient = false
-unresizable = true
-borderless = true
-
-[node name="Language" parent="AcceptDialog" instance=ExtResource("6_1j1k5")]
+[node name="Language" parent="." instance=ExtResource("6_1j1k5")]
+visible = false
+layout_mode = 1
 offset_left = 8.0
-offset_top = 8.0
+offset_top = -47.0
 offset_right = -8.0
-offset_bottom = -102.0
+offset_bottom = -157.0
 
 [node name="Settings" parent="." instance=ExtResource("7_nt0jj")]
 visible = false
@@ -175,5 +170,5 @@ offset_bottom = 300.0
 [connection signal="pressed" from="MarginContainer/LanguageButton" to="." method="_on_language_button_pressed"]
 [connection signal="canceled" from="ConfirmationDialog" to="." method="_on_confirmation_dialog_canceled"]
 [connection signal="confirmed" from="ConfirmationDialog" to="." method="_on_confirmation_dialog_confirmed"]
-[connection signal="confirmed" from="AcceptDialog" to="." method="_on_accept_dialog_confirmed"]
+[connection signal="close" from="Language" to="." method="_on_language_close"]
 [connection signal="close" from="Settings" to="." method="_on_settings_close"]
