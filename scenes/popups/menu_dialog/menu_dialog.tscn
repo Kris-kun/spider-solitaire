@@ -1,16 +1,19 @@
-[gd_scene load_steps=6 format=3 uid="uid://co6uf4jhk5jkp"]
+[gd_scene load_steps=7 format=3 uid="uid://co6uf4jhk5jkp"]
 
 [ext_resource type="Script" path="res://scenes/popups/menu_dialog/menu_dialog.gd" id="1_7loox"]
+[ext_resource type="Theme" uid="uid://ct58k8ac74avc" path="res://scenes/popups/menu_dialog/menu_theme.tres" id="1_qnjr0"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dr6eu"]
-bg_color = Color(0.575427, 0.352617, 0.0303987, 1)
-border_width_right = 40
-border_width_bottom = 40
-border_color = Color(0.430389, 0.242224, 4.81308e-08, 1)
-corner_radius_top_left = 60
-corner_radius_top_right = 60
-corner_radius_bottom_right = 60
-corner_radius_bottom_left = 60
+bg_color = Color(0.773726, 0.481433, 0.0612178, 1)
+border_width_left = 20
+border_width_top = 20
+border_width_right = 20
+border_width_bottom = 20
+border_color = Color(0.597324, 0.344446, 0, 1)
+corner_radius_top_left = 40
+corner_radius_top_right = 40
+corner_radius_bottom_right = 40
+corner_radius_bottom_left = 40
 shadow_size = 10
 shadow_offset = Vector2(10, 10)
 
@@ -31,14 +34,16 @@ corner_radius_bottom_left = 50
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_a01yj"]
 content_margin_left = 40.0
 content_margin_right = 40.0
-bg_color = Color(0.745162, 0.461493, 0.0524858, 1)
-border_width_right = 20
-border_width_bottom = 20
-border_color = Color(0.555607, 0.317964, 0.00208762, 1)
-corner_radius_top_left = 30
-corner_radius_top_right = 30
-corner_radius_bottom_right = 30
-corner_radius_bottom_left = 30
+bg_color = Color(0.596078, 0.345098, 0, 1)
+border_width_left = 10
+border_width_top = 10
+border_width_right = 10
+border_width_bottom = 10
+border_color = Color(0.772549, 0.482353, 0.0627451, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
 shadow_size = 10
 shadow_offset = Vector2(10, 10)
 
@@ -52,6 +57,7 @@ offset_right = -1320.0
 offset_bottom = -480.0
 grow_horizontal = 2
 grow_vertical = 2
+theme = ExtResource("1_qnjr0")
 script = ExtResource("1_7loox")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
@@ -62,7 +68,7 @@ anchor_right = 1.0
 offset_bottom = 400.0
 grow_horizontal = 2
 mouse_filter = 2
-theme_override_constants/margin_top = 100
+theme_override_constants/margin_top = 60
 
 [node name="BackgroundPanel" type="Panel" parent="MarginContainer"]
 layout_mode = 2
@@ -71,12 +77,12 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_dr6eu")
 [node name="MarginContainer" type="MarginContainer" parent="MarginContainer"]
 layout_mode = 2
 mouse_filter = 2
-theme_override_constants/margin_top = 20
-theme_override_constants/margin_right = 60
+theme_override_constants/margin_top = 30
+theme_override_constants/margin_right = 30
 
 [node name="CloseButton" type="Button" parent="MarginContainer/MarginContainer"]
 visible = false
-custom_minimum_size = Vector2(100, 100)
+custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
 size_flags_horizontal = 8
 size_flags_vertical = 0
@@ -90,7 +96,7 @@ text = "X"
 layout_mode = 2
 mouse_filter = 2
 theme_override_constants/margin_left = 50
-theme_override_constants/margin_top = 140
+theme_override_constants/margin_top = 120
 theme_override_constants/margin_right = 50
 theme_override_constants/margin_bottom = 50
 
@@ -98,13 +104,13 @@ theme_override_constants/margin_bottom = 50
 layout_mode = 2
 
 [node name="TitleContainer" type="PanelContainer" parent="."]
-custom_minimum_size = Vector2(200, 200)
+custom_minimum_size = Vector2(200, 140)
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
 offset_left = -100.0
 offset_right = 100.0
-offset_bottom = 200.0
+offset_bottom = 140.0
 grow_horizontal = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_a01yj")
