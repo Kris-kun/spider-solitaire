@@ -14,9 +14,6 @@ script = ExtResource("1_hpl4v")
 [node name="MenuDialog" parent="." instance=ExtResource("2_xf6bg")]
 layout_mode = 2
 
-[node name="CloseButton" parent="MenuDialog/MarginContainer/MarginContainer" index="0"]
-visible = false
-
 [node name="VBoxContainer" type="VBoxContainer" parent="MenuDialog/MarginContainer/MarginContainer2/ContentContainer" index="0"]
 layout_mode = 2
 theme_override_constants/separation = 60
