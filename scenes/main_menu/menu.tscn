@@ -74,20 +74,20 @@ focus_mode = 0
 text = "MENU_CONTINUE"
 
 [node name="PlayButton1" type="Button" parent="CenterContainer/VBoxContainer/VBoxContainer"]
+auto_translate_mode = 2
 layout_mode = 2
-auto_translate = false
 focus_mode = 0
 text = "MENU_COLOR_1"
 
 [node name="PlayButton2" type="Button" parent="CenterContainer/VBoxContainer/VBoxContainer"]
+auto_translate_mode = 2
 layout_mode = 2
-auto_translate = false
 focus_mode = 0
 text = "MENU_COLOR_2"
 
 [node name="PlayButton4" type="Button" parent="CenterContainer/VBoxContainer/VBoxContainer"]
+auto_translate_mode = 2
 layout_mode = 2
-auto_translate = false
 focus_mode = 0
 text = "MENU_COLOR_4"
 

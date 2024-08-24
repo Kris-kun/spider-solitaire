@@ -17,8 +17,8 @@ corner_radius_bottom_left = 40
 shadow_size = 10
 shadow_offset = Vector2(10, 10)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_i8b6o"]
-bg_color = Color(0.827451, 0.184314, 0.137255, 1)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nyiei"]
+bg_color = Color(0.964531, 0.363959, 0.297891, 1)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
@@ -29,8 +29,8 @@ corner_radius_top_right = 50
 corner_radius_bottom_right = 50
 corner_radius_bottom_left = 50
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nyiei"]
-bg_color = Color(0.964531, 0.363959, 0.297891, 1)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_i8b6o"]
+bg_color = Color(0.827451, 0.184314, 0.137255, 1)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
@@ -97,9 +97,9 @@ layout_mode = 2
 size_flags_horizontal = 8
 size_flags_vertical = 0
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_i8b6o")
 theme_override_styles/hover = SubResource("StyleBoxFlat_nyiei")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_i8b6o")
+theme_override_styles/normal = SubResource("StyleBoxFlat_i8b6o")
 text = "X"
 
 [node name="MarginContainer2" type="MarginContainer" parent="MarginContainer"]

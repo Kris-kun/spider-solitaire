@@ -22,8 +22,8 @@ theme_override_constants/separation = 60
 custom_minimum_size = Vector2(300, 100)
 layout_mode = 2
 focus_mode = 0
-theme_override_constants/v_separation = 20
 theme_override_constants/icon_margin = 20
+theme_override_constants/v_separation = 20
 auto_height = true
 
 [node name="OkButton" type="Button" parent="MenuDialog/MarginContainer/MarginContainer2/ContentContainer/VBoxContainer"]
